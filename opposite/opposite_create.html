@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        --color-right: #00ff00;
+        --color-left: #ff00ff;
+        --color-bubbles: gray;
+        --size-bubbles: 1;
+        --size-wave: calc(400px * 0.008);
+      }
+      .preview {
+        height: 80px;
+        width: 400px;
+        display: flex;
+        position: relative;
+        border: 1px solid #696969;
+      }
+
+      .ed {
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+      }
+      .ed_col {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .ed_col label {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .item {
+        height: 100%;
+        width: 100%;
+        display: flex;
+      }
+      .item.left {
+        justify-content: flex-end;
+      }
+      .item.right {
+        justify-content: flex-start;
+      }
+      .fill {
+        height: 100%;
+        transition: width 1s;
+
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+      .right .fill {
+        background-color: var(--color-right);
+      }
+      .left .fill {
+        background-color: var(--color-left);
+      }
+
+      .liquid .fill {
+        transition: width 3s cubic-bezier(0.5, 0, 0.5, 1.5);
+      }
+      .liquid .right .fill {
+        animation-name: rightWave;
+      }
+      .liquid .left .fill {
+        animation-name: leftWave;
+      }
+
+      .bubble {
+        visibility: hidden;
+        position: absolute;
+        background-color: transparent;
+        height: calc(var(--size-bubbles) * calc(80px * 0.05));
+        width: calc(var(--size-bubbles) * calc(80px * 0.05));
+        border-radius: 50%;
+        box-shadow: var(--color-bubbles) 1px -1px 2px 1px;
+
+        animation-name: shaking, surfacing;
+        animation-duration: calc(var(--size-bubbles) * 2s), calc(var(--size-bubbles) * 10s);
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+      .liquid .bubble {
+        visibility: visible;
+      }
+
+      @keyframes shaking {
+        0% {
+          transform: translateX(calc(var(--size-bubbles) * 100%));
+        }
+
+        50% {
+          transform: translateX(calc(var(--size-bubbles) * -100%));
+        }
+
+        100% {
+          transform: translateX(calc(var(--size-bubbles) * 100%));
+        }
+      }
+
+      @keyframes surfacing {
+        0% {
+          bottom: calc(var(--size-bubbles) * calc(80px * -0.01));
+        }
+
+        100% {
+          bottom: calc(var(--size-bubbles) * calc(80px * -0.01) + 80px);
+        }
+      }
+
+      @keyframes rightWave {
+        0%, 100% {
+          clip-path: polygon(
+            0 0,
+            100% 0,
+            calc(100% - var(--size-wave) * 0.5) 6%,
+            calc(100% - var(--size-wave) * 0.3) 14%,
+            calc(100% - var(--size-wave) * 0.3) 20%,
+            calc(100% - var(--size-wave) * 0.5) 25%,
+            calc(100% - var(--size-wave) * 0.8) 31%,
+            calc(100% - var(--size-wave) * 0.9) 37%,
+            calc(100% - var(--size-wave) * 0.8) 42%,
+            calc(100% - var(--size-wave) * 0.4) 47%,
+            calc(100% - var(--size-wave) * 0.1) 56%,
+            calc(100% - var(--size-wave) * 0.3) 63%,
+            calc(100% - var(--size-wave) * 0.6) 67%,
+            calc(100% - var(--size-wave) * 0.8) 73%,
+            calc(100% - var(--size-wave) * 0.9) 79%,
+            calc(100% - var(--size-wave) * 0.8) 86%,
+            calc(100% - var(--size-wave) * 0.5) 93%,
+            calc(100% - var(--size-wave) * 0.4) 100%,
+            0 100%
+          );
+        }
+
+        25% {
+          clip-path: polygon(
+            0 0,
+            calc(100% - var(--size-wave) * 0.6) 0,
+            calc(100% - var(--size-wave) * 0.6) 6%,
+            calc(100% - var(--size-wave) * 0.8) 12%,
+            calc(100% - var(--size-wave) * 1) 18%,
+            calc(100% - var(--size-wave) * 0.9) 25%,
+            calc(100% - var(--size-wave) * 0.6) 30%,
+            calc(100% - var(--size-wave) * 0.5) 36%,
+            calc(100% - var(--size-wave) * 0.5) 41%,
+            calc(100% - var(--size-wave) * 0.8) 48%,
+            calc(100% - var(--size-wave) * 0.9) 54%,
+            calc(100% - var(--size-wave) * 0.8) 60%,
+            calc(100% - var(--size-wave) * 0.6) 66%,
+            calc(100% - var(--size-wave) * 0.5) 73%,
+            calc(100% - var(--size-wave) * 0.6) 79%,
+            calc(100% - var(--size-wave) * 0.7) 86%,
+            calc(100% - var(--size-wave) * 0.9) 93%,
+            100% 100%,
+            0 100%
+          );
+        }
+
+        50% {
+          clip-path: polygon(
+            0 0,
+            calc(100% - var(--size-wave) * 0.3) 0,
+            calc(100% - var(--size-wave) * 0.4) 6%,
+            calc(100% - var(--size-wave) * 0.6) 12%,
+            calc(100% - var(--size-wave) * 0.9) 18%,
+            calc(100% - var(--size-wave) * 1) 25%,
+            calc(100% - var(--size-wave) * 0.8) 31%,
+            calc(100% - var(--size-wave) * 0.5) 36%,
+            calc(100% - var(--size-wave) * 0.3) 43%,
+            calc(100% - var(--size-wave) * 0.5) 49%,
+            calc(100% - var(--size-wave) * 0.8) 54%,
+            calc(100% - var(--size-wave) * 1) 60%,
+            calc(100% - var(--size-wave) * 0.9) 66%,
+            calc(100% - var(--size-wave) * 0.8) 73%,
+            calc(100% - var(--size-wave) * 0.5) 79%,
+            calc(100% - var(--size-wave) * 0.4) 86%,
+            calc(100% - var(--size-wave) * 0.6) 93%,
+            100% 100%,
+            0 100%
+          );
+        }
+
+        75% {
+          clip-path: polygon(
+            0 0,
+            calc(100% - var(--size-wave) * 0.9) 0,
+            calc(100% - var(--size-wave) * 0.7) 6%,
+            calc(100% - var(--size-wave) * 0.6) 12%,
+            calc(100% - var(--size-wave) * 0.5) 18%,
+            calc(100% - var(--size-wave) * 0.6) 25%,
+            calc(100% - var(--size-wave) * 0.8) 30%,
+            calc(100% - var(--size-wave) * 0.9) 36%,
+            calc(100% - var(--size-wave) * 0.8) 41%,
+            calc(100% - var(--size-wave) * 0.5) 48%,
+            calc(100% - var(--size-wave) * 0.5) 54%,
+            calc(100% - var(--size-wave) * 0.6) 60%,
+            calc(100% - var(--size-wave) * 0.9) 66%,
+            calc(100% - var(--size-wave) * 1) 73%,
+            calc(100% - var(--size-wave) * 0.8) 79%,
+            calc(100% - var(--size-wave) * 0.6) 86%,
+            calc(100% - var(--size-wave) * 0.6) 93%,
+            100% 100%,
+            0 100%
+          );
+        }
+      }
+
+      @keyframes leftWave {
+        0%, 100% {
+          clip-path: polygon(
+            100% 0,
+            calc(var(--size-wave) * 0.3) 0,
+            calc(var(--size-wave) * 0.4) 6%,
+            calc(var(--size-wave) * 0.6) 12%,
+            calc(var(--size-wave) * 0.9) 18%,
+            calc(var(--size-wave) * 1) 25%,
+            calc(var(--size-wave) * 0.8) 31%,
+            calc(var(--size-wave) * 0.5) 36%,
+            calc(var(--size-wave) * 0.3) 43%,
+            calc(var(--size-wave) * 0.5) 49%,
+            calc(var(--size-wave) * 0.8) 54%,
+            calc(var(--size-wave) * 1) 60%,
+            calc(var(--size-wave) * 0.9) 66%,
+            calc(var(--size-wave) * 0.8) 73%,
+            calc(var(--size-wave) * 0.5) 79%,
+            calc(var(--size-wave) * 0.4) 86%,
+            calc(var(--size-wave) * 0.6) 93%,
+            0 100%,
+            100% 100%
+          );
+        }
+
+        25% {
+          clip-path: polygon(
+            100% 0,
+            calc(var(--size-wave) * 0.9) 0,
+            calc(var(--size-wave) * 0.7) 6%,
+            calc(var(--size-wave) * 0.6) 12%,
+            calc(var(--size-wave) * 0.5) 18%,
+            calc(var(--size-wave) * 0.6) 25%,
+            calc(var(--size-wave) * 0.8) 30%,
+            calc(var(--size-wave) * 0.9) 36%,
+            calc(var(--size-wave) * 0.8) 41%,
+            calc(var(--size-wave) * 0.5) 48%,
+            calc(var(--size-wave) * 0.5) 54%,
+            calc(var(--size-wave) * 0.6) 60%,
+            calc(var(--size-wave) * 0.9) 66%,
+            calc(var(--size-wave) * 1) 73%,
+            calc(var(--size-wave) * 0.8) 79%,
+            calc(var(--size-wave) * 0.6) 86%,
+            calc(var(--size-wave) * 0.6) 93%,
+            0 100%,
+            100% 100%
+          );
+        }
+
+        50% {
+          clip-path: polygon(
+            100% 0,
+            0 0,
+            calc(var(--size-wave) * 0.5) 6%,
+            calc(var(--size-wave) * 0.3) 14%,
+            calc(var(--size-wave) * 0.3) 20%,
+            calc(var(--size-wave) * 0.5) 25%,
+            calc(var(--size-wave) * 0.8) 31%,
+            calc(var(--size-wave) * 0.9) 37%,
+            calc(var(--size-wave) * 0.8) 42%,
+            calc(var(--size-wave) * 0.4) 47%,
+            calc(var(--size-wave) * 0.1) 56%,
+            calc(var(--size-wave) * 0.3) 63%,
+            calc(var(--size-wave) * 0.6) 67%,
+            calc(var(--size-wave) * 0.8) 73%,
+            calc(var(--size-wave) * 0.9) 79%,
+            calc(var(--size-wave) * 0.8) 86%,
+            calc(var(--size-wave) * 0.5) 93%,
+            calc(var(--size-wave) * 0.4) 100%,
+            100% 100%
+          );
+        }
+
+        75% {
+          clip-path: polygon(
+            100% 0,
+            calc(var(--size-wave) * 0.6) 0,
+            calc(var(--size-wave) * 0.6) 6%,
+            calc(var(--size-wave) * 0.8) 12%,
+            calc(var(--size-wave) * 1) 18%,
+            calc(var(--size-wave) * 0.9) 25%,
+            calc(var(--size-wave) * 0.6) 30%,
+            calc(var(--size-wave) * 0.5) 36%,
+            calc(var(--size-wave) * 0.5) 41%,
+            calc(var(--size-wave) * 0.8) 48%,
+            calc(var(--size-wave) * 0.9) 54%,
+            calc(var(--size-wave) * 0.8) 60%,
+            calc(var(--size-wave) * 0.6) 66%,
+            calc(var(--size-wave) * 0.5) 73%,
+            calc(var(--size-wave) * 0.6) 79%,
+            calc(var(--size-wave) * 0.7) 86%,
+            calc(var(--size-wave) * 0.9) 93%,
+            0 100%,
+            100% 100%
+          );
+        }
+      }
+    </style>
+  </head>
+  <body class="liquid">
+    <label>
+      Имя файла:
+      <input type="text" value="" class="filename">
+    </label>
+    <label>
+      Цена заполненной стороны (левая-правая=):
+      <input type="number" value="20000" class="limit">
+    </label>
+    <label>
+      Это жидкость:
+      <input type="checkbox" class="liquid_i" checked>
+    </label>
+    <div class="ed">
+      <div class="left ed_col">
+        <h3>Левый</h3>
+        <label>
+          Ссылка на сбор:
+          <input type="text" class="link_left">
+        </label>
+        <label>
+          Цвет:
+          <input type="color" class="color_left" value="#ff00ff">
+        </label>
+      </div>
+
+      <div class="right ed_col">
+        <h3>Правый</h3>
+        <label>
+          Ссылка на сбор:
+          <input type="text" class="link_right">
+        </label>
+        <label>
+          Цвет:
+          <input type="color" class="color_right" value="#00ff00">
+        </label>
+      </div>
+    </div>
+
+    <button class="download">Скачать</button>
+
+    <h3>Предпросмотр</h3>
+    <div class="preview">
+      <div class="item left" id="left">
+        <div style="width: 0;" class="fill"></div>
+      </div>
+      <div class="item right" id="right">
+        <div style="width: 0;" class="fill"></div>
+      </div>
+    </div>
+    <i>(400px/80px, случайные значения)</i>
+
+    <script>
+      const values = {
+        limit: 20000,
+        filename: '',
+        liquid: true,
+        right: {
+          ref: '',
+          token: '',
+          color: '#00ff00',
+        },
+        left: {
+          ref: '',
+          token: '',
+          color: '#ff00ff',
+        },
+      };
+
+      const inputFilename = document.querySelector(`.filename`);
+      inputFilename.addEventListener('change', ({ target: { value } }) => {
+        values.filename = value;
+      });
+
+      const inputLimit = document.querySelector(`.limit`);
+      inputLimit.addEventListener('change', ({ target: { value } }) => {
+        values.limit = value;
+      });
+
+      const inputColorRight = document.querySelector(`.color_right`);
+      inputColorRight.addEventListener('change', ({ target: { value } }) => {
+        values.right.color = value;
+        document.body.style.setProperty('--color-right', value);
+      });
+      const inputColorLeft = document.querySelector(`.color_left`);
+      inputColorLeft.addEventListener('change', ({ target: { value } }) => {
+        values.left.color = value;
+        document.body.style.setProperty('--color-left', value);
+      });
+
+      const inputLinkRight = document.querySelector(`.link_right`);
+      inputLinkRight.addEventListener('change', ({ target: { value } }) => {
+        const search = value.replace(/^.*(?=\?)/, '');
+        const searchParams = new URLSearchParams(search);
+
+        values.right.ref = searchParams.get('ref');
+        values.right.token = searchParams.get('token');
+      });
+      const inputLinkLeft = document.querySelector(`.link_left`);
+      inputLinkLeft.addEventListener('change', ({ target: { value } }) => {
+        const search = value.replace(/^.*(?=\?)/, '');
+        const searchParams = new URLSearchParams(search);
+
+        values.left.ref = searchParams.get('ref');
+        values.left.token = searchParams.get('token');
+      });
+
+      const inputLiquid = document.querySelector(`.liquid_i`);
+      inputLiquid.addEventListener('change', ({ target: { checked } }) => {
+        values.liquid = checked;
+        if (checked) {
+          document.body.classList.add('liquid');
+        } else {
+          document.body.classList.remove('liquid');
+        }
+      });
+
+      const buildStyles = () => {
+        return `<style>html {--color-right: ${values.right.color};--color-left: ${values.left.color};}</style>`;
+      };
+
+      const buildJSVars = () => {
+        return `<script>const refLeft="${values.left.ref}",tokenLeft="${values.left.token}",refRight="${values.right.ref}",tokenRight="${values.right.token}",limit=${values.limit},liquid=${values.liquid ? 'true' : 'false'},bubbles=50;</` + 'script>';
+      };
+
+      const buildPage = () => {
+        const head = "<!DOCTYPE html><html><head><style>html{--color-right:yellow;--color-left:red;--color-bubbles:gray;--size-bubbles:1;--size-wave:.8vw}html{height:100%;background-color:rgba(0,0,0,0)}body{height:100%;width:100%;margin:0;background-color:rgba(0,0,0,0)}.container{height:100%;width:100%;display:flex;position:relative}.item{height:100%;width:100%;display:flex}.item.left{justify-content:flex-end}.item.right{justify-content:flex-start}.fill{height:100%;transition:width 1s;overflow:hidden;position:relative;animation-duration:3s;animation-iteration-count:infinite;animation-timing-function:linear}.right .fill{background-color:var(--color-right)}.left .fill{background-color:var(--color-left)}.liquid .fill{transition:width 3s cubic-bezier(0.5, 0, 0.5, 1.5)}.liquid .right .fill{animation-name:rightWave}.liquid .left .fill{animation-name:leftWave}.bubble{position:absolute;background-color:transparent;height:calc(var(--size-bubbles) * 5vh);width:calc(var(--size-bubbles) * 5vh);border-radius:50%;box-shadow:var(--color-bubbles) 1px -1px 2px 1px;animation-name:shaking,surfacing;animation-duration:calc(var(--size-bubbles) * 2s), calc(var(--size-bubbles) * 10s);animation-iteration-count:infinite;animation-timing-function:linear}@keyframes shaking{0%{transform:translateX(calc(var(--size-bubbles) * 100%))}50%{transform:translateX(calc(var(--size-bubbles) * -100%))}100%{transform:translateX(calc(var(--size-bubbles) * 100%))}}@keyframes surfacing{0%{bottom:calc(var(--size-bubbles) * -1vh)}100%{bottom:calc(var(--size-bubbles) * -1vh + 100vh)}}@keyframes rightWave{0%,100%{clip-path:polygon(0 0,100% 0,calc(100% - var(--size-wave) * 0.5) 6%, calc(100% - var(--size-wave) * 0.3) 14%, calc(100% - var(--size-wave) * 0.3) 20%, calc(100% - var(--size-wave) * 0.5) 25%, calc(100% - var(--size-wave) * 0.8) 31%, calc(100% - var(--size-wave) * 0.9) 37%, calc(100% - var(--size-wave) * 0.8) 42%, calc(100% - var(--size-wave) * 0.4) 47%, calc(100% - var(--size-wave) * 0.1) 56%, calc(100% - var(--size-wave) * 0.3) 63%, calc(100% - var(--size-wave) * 0.6) 67%, calc(100% - var(--size-wave) * 0.8) 73%, calc(100% - var(--size-wave) * 0.9) 79%, calc(100% - var(--size-wave) * 0.8) 86%, calc(100% - var(--size-wave) * 0.5) 93%, calc(100% - var(--size-wave) * 0.4) 100%, 0 100%)}25%{clip-path:polygon(0 0,calc(100% - var(--size-wave) * 0.6) 0, calc(100% - var(--size-wave) * 0.6) 6%, calc(100% - var(--size-wave) * 0.8) 12%, calc(100% - var(--size-wave) * 1) 18%, calc(100% - var(--size-wave) * 0.9) 25%, calc(100% - var(--size-wave) * 0.6) 30%, calc(100% - var(--size-wave) * 0.5) 36%, calc(100% - var(--size-wave) * 0.5) 41%, calc(100% - var(--size-wave) * 0.8) 48%, calc(100% - var(--size-wave) * 0.9) 54%, calc(100% - var(--size-wave) * 0.8) 60%, calc(100% - var(--size-wave) * 0.6) 66%, calc(100% - var(--size-wave) * 0.5) 73%, calc(100% - var(--size-wave) * 0.6) 79%, calc(100% - var(--size-wave) * 0.7) 86%, calc(100% - var(--size-wave) * 0.9) 93%, 100% 100%, 0 100%)}50%{clip-path:polygon(0 0,calc(100% - var(--size-wave) * 0.3) 0, calc(100% - var(--size-wave) * 0.4) 6%, calc(100% - var(--size-wave) * 0.6) 12%, calc(100% - var(--size-wave) * 0.9) 18%, calc(100% - var(--size-wave) * 1) 25%, calc(100% - var(--size-wave) * 0.8) 31%, calc(100% - var(--size-wave) * 0.5) 36%, calc(100% - var(--size-wave) * 0.3) 43%, calc(100% - var(--size-wave) * 0.5) 49%, calc(100% - var(--size-wave) * 0.8) 54%, calc(100% - var(--size-wave) * 1) 60%, calc(100% - var(--size-wave) * 0.9) 66%, calc(100% - var(--size-wave) * 0.8) 73%, calc(100% - var(--size-wave) * 0.5) 79%, calc(100% - var(--size-wave) * 0.4) 86%, calc(100% - var(--size-wave) * 0.6) 93%, 100% 100%, 0 100%)}75%{clip-path:polygon(0 0,calc(100% - var(--size-wave) * 0.9) 0, calc(100% - var(--size-wave) * 0.7) 6%, calc(100% - var(--size-wave) * 0.6) 12%, calc(100% - var(--size-wave) * 0.5) 18%, calc(100% - var(--size-wave) * 0.6) 25%, calc(100% - var(--size-wave) * 0.8) 30%, calc(100% - var(--size-wave) * 0.9) 36%, calc(100% - var(--size-wave) * 0.8) 41%, calc(100% - var(--size-wave) * 0.5) 48%, calc(100% - var(--size-wave) * 0.5) 54%, calc(100% - var(--size-wave) * 0.6) 60%, calc(100% - var(--size-wave) * 0.9) 66%, calc(100% - var(--size-wave) * 1) 73%, calc(100% - var(--size-wave) * 0.8) 79%, calc(100% - var(--size-wave) * 0.6) 86%, calc(100% - var(--size-wave) * 0.6) 93%, 100% 100%, 0 100%)}}@keyframes leftWave{0%,100%{clip-path:polygon(100% 0,calc(var(--size-wave) * 0.3) 0, calc(var(--size-wave) * 0.4) 6%, calc(var(--size-wave) * 0.6) 12%, calc(var(--size-wave) * 0.9) 18%, calc(var(--size-wave) * 1) 25%, calc(var(--size-wave) * 0.8) 31%, calc(var(--size-wave) * 0.5) 36%, calc(var(--size-wave) * 0.3) 43%, calc(var(--size-wave) * 0.5) 49%, calc(var(--size-wave) * 0.8) 54%, calc(var(--size-wave) * 1) 60%, calc(var(--size-wave) * 0.9) 66%, calc(var(--size-wave) * 0.8) 73%, calc(var(--size-wave) * 0.5) 79%, calc(var(--size-wave) * 0.4) 86%, calc(var(--size-wave) * 0.6) 93%, 0 100%, 100% 100%)}25%{clip-path:polygon(100% 0,calc(var(--size-wave) * 0.9) 0, calc(var(--size-wave) * 0.7) 6%, calc(var(--size-wave) * 0.6) 12%, calc(var(--size-wave) * 0.5) 18%, calc(var(--size-wave) * 0.6) 25%, calc(var(--size-wave) * 0.8) 30%, calc(var(--size-wave) * 0.9) 36%, calc(var(--size-wave) * 0.8) 41%, calc(var(--size-wave) * 0.5) 48%, calc(var(--size-wave) * 0.5) 54%, calc(var(--size-wave) * 0.6) 60%, calc(var(--size-wave) * 0.9) 66%, calc(var(--size-wave) * 1) 73%, calc(var(--size-wave) * 0.8) 79%, calc(var(--size-wave) * 0.6) 86%, calc(var(--size-wave) * 0.6) 93%, 0 100%, 100% 100%)}50%{clip-path:polygon(100% 0,0 0,calc(var(--size-wave) * 0.5) 6%, calc(var(--size-wave) * 0.3) 14%, calc(var(--size-wave) * 0.3) 20%, calc(var(--size-wave) * 0.5) 25%, calc(var(--size-wave) * 0.8) 31%, calc(var(--size-wave) * 0.9) 37%, calc(var(--size-wave) * 0.8) 42%, calc(var(--size-wave) * 0.4) 47%, calc(var(--size-wave) * 0.1) 56%, calc(var(--size-wave) * 0.3) 63%, calc(var(--size-wave) * 0.6) 67%, calc(var(--size-wave) * 0.8) 73%, calc(var(--size-wave) * 0.9) 79%, calc(var(--size-wave) * 0.8) 86%, calc(var(--size-wave) * 0.5) 93%, calc(var(--size-wave) * 0.4) 100%, 100% 100%)}75%{clip-path:polygon(100% 0,calc(var(--size-wave) * 0.6) 0, calc(var(--size-wave) * 0.6) 6%, calc(var(--size-wave) * 0.8) 12%, calc(var(--size-wave) * 1) 18%, calc(var(--size-wave) * 0.9) 25%, calc(var(--size-wave) * 0.6) 30%, calc(var(--size-wave) * 0.5) 36%, calc(var(--size-wave) * 0.5) 41%, calc(var(--size-wave) * 0.8) 48%, calc(var(--size-wave) * 0.9) 54%, calc(var(--size-wave) * 0.8) 60%, calc(var(--size-wave) * 0.6) 66%, calc(var(--size-wave) * 0.5) 73%, calc(var(--size-wave) * 0.6) 79%, calc(var(--size-wave) * 0.7) 86%, calc(var(--size-wave) * 0.9) 93%, 0 100%, 100% 100%)}}</style>";
+        const body = "</head><body><div class=\"container\"><div class=\"item left\" id=\"left\"><div style=\"width: 0;\" class=\"fill\"></div></div><div class=\"item right\" id=\"right\"><div style=\"width: 0;\" class=\"fill\"></div></div></div>";
+        const scripts = "<script>const MESSAGE_TYPES={DATA:\"DATA\",PING:\"PING\",REFRESH:\"REFRESH\",DELETE:\"DELETE\"},fmtApiUri=t=>{var e=t.length,t=t.slice(e-2,e),e=1+parseInt(t,16)%29,t=new Intl.NumberFormat(\"en-IN\",{minimumIntegerDigits:3}).format(e);return\"https://api.donatty.com\".replace(\"://api.\",`://api-${t}.`)};class AuthClient{#authEndpoint=\"https://api.donatty.com/auth/tokens\";#authToken=\"\";#jwtToken=\"\";get jwt(){return this.#jwtToken}constructor(t){this.#authToken=t}async#fetchJwtToken(){try{var{accessToken:t}=(await(await fetch(this.#authEndpoint+\"/\"+this.#authToken,{method:\"GET\",headers:{\"Content-Type\":\"application/json\"}})).json()).response;this.#jwtToken=t}catch(t){throw console.error(\"Failed to fetch JWT token:\",t),t}}async auth(){this.#authToken?await this.#fetchJwtToken():console.error(\"Token is missing in the URL\")}}class SSEClient{#sseEndpoint=\"\";#zoneOffset=this.#getTimeZoneOffset();#reconnectInterval=6e5;#reconnectionTimeout=null;#authClient=null;#eventSource=null;constructor(t,e){this.#authClient=t,this.#sseEndpoint=fmtApiUri(e)+`/widgets/${e}/sse`}#getTimeZoneOffset(){return(new Date).getTimezoneOffset()}#connectToSSE(){this.#eventSource&&this.#eventSource.close();var t=this.#authClient.jwt,t=new EventSource(this.#sseEndpoint+`?jwt=${t}&zoneOffset=`+this.#zoneOffset);t.onmessage=t=>{this.onMessage(t.data)},t.onerror=t=>{console.error(\"SSE error\",t),console.error(\"reconnecting...\"),this.#eventSource.close(),this.#clearReconnectTimeout(),setTimeout(()=>this.#connectToSSE(),5e3)},this.#eventSource=t,this.#scheduleReconnect()}#scheduleReconnect(){this.#clearReconnectTimeout(),this.#reconnectionTimeout=setTimeout(()=>{console.info(\"Reconnecting SSE after 10 minutes...\"),this.#connectToSSE(this.#authClient.jwt)},this.#reconnectInterval)}#clearReconnectTimeout(){this.#reconnectionTimeout&&(clearTimeout(this.#reconnectionTimeout),this.#reconnectionTimeout=null)}#prepareMessage(t){var{action:t,data:e}=JSON.parse(t);let i,n,s;switch(t){case MESSAGE_TYPES.REFRESH:i=MESSAGE_TYPES.DATA,s=e.props.data.goalCollected,n=e.props.data.goal;break;case MESSAGE_TYPES.DATA:i=MESSAGE_TYPES.DATA,s=e.raised;break;default:i=MESSAGE_TYPES.PING}return{type:i,goal:n,raised:s}}onMessage(t){var{type:t,goal:e,raised:i}=this.#prepareMessage(t);\"DATA\"===t&&this.onData(i,e)}onData(t,e){console.log(\"New data:\",{raised:t,goal:e})}async start(){this.#authClient?this.#connectToSSE():console.error(\"Auth is missing in the URL\")}}class DataClient{#apiEndpoint=\"\";#authToken=\"\";#refToken=\"\";goal=0;raised=0;#authClient=null;#sseClient=null;get percent(){return this.raised/this.goal||0}get ref(){return this.#refToken}constructor(t,e){this.#authToken=t,this.#refToken=e,this.#apiEndpoint=fmtApiUri(this.#refToken)+\"/widgets/\"+this.#refToken,this.#init()}async#init(){try{this.#authClient=new AuthClient(this.#authToken),await this.#authClient.auth(),await this.#getData()}catch(t){return console.error(\"SWW on init, retry...\"),this.#authClient=null,void setTimeout(()=>this.#init(),5e3)}var t=new SSEClient(this.#authClient,this.#refToken);t.onData=(t,e)=>this.#update(t,e),t.start(),this.#sseClient=t}async#getData(){try{var{props:{data:{goal:t,goalCollected:e}}}=(await(await fetch(this.#apiEndpoint,{method:\"GET\",headers:{\"Content-Type\":\"application/json\",Authorization:\"Bearer \"+this.#authClient.jwt}})).json()).response;this.#update(e,t)}catch(t){throw console.error(\"Failed to fetch initial data:\",t),t}}#update(t,e){this.raised=t,e&&(this.goal=e),document.dispatchEvent(new CustomEvent(\"goal_updated\",{detail:{goal:this.goal,raised:this.raised,percent:this.percent,ref:this.#refToken}}))}}class App{#limit=0;#right=null;#left=null;#sideToEl={right:null,left:null};#bubbles={right:[],left:[]};constructor(t,e){this.#limit=t,this.#right=this.#initClient(tokenRight,refRight),this.#sideToEl.right=document.querySelector(\"#right .fill\"),this.#left=this.#initClient(tokenLeft,refLeft),this.#sideToEl.left=document.querySelector(\"#left .fill\"),e&&(this.#initBubbles(e,\"left\"),this.#initBubbles(e,\"right\"),document.body.classList.add(\"liquid\")),document.addEventListener(\"goal_updated\",()=>this.#updatePercents())}#initClient(t,e){return new DataClient(t,e)}#initBubble(t){var e=document.createElement(\"div\"),i=(e.classList.add(\"bubble\"),Math.random()+.3),i=(e.style.setProperty(\"--size-bubbles\",i),.6+.4*Math.random()),i=(e.style.opacity=i,Math.random());e.style[t]=`calc(${i} * 50vw)`,this.#sideToEl[t].appendChild(e),this.#bubbles[t].push(e)}#initBubbles(e,i){for(let t=0;t<e;t++)setTimeout(()=>{this.#initBubble(i)},200*t)}#getPercents(){var t=this.#left.raised-this.#right.raised;return Math.max(Math.min(t/this.#limit,1),-1)}#setPercents(t){var e=100*Math.abs(t)+\"%\";let i=0,n=0;0<=t&&(i=e),t<=0&&(n=e),this.#sideToEl.right.style.width=i,this.#sideToEl.left.style.width=n}#updatePercents(){var t=this.#getPercents();this.#setPercents(t)}}const app=new App(limit,liquid?bubbles:0);</" + "script></body></html>";
+
+        return ''
+          + head
+          + buildStyles()
+          + body
+          + buildJSVars()
+          + scripts;
+      };
+
+      const handleDownload = () => {
+        const page = buildPage();
+
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(page));
+        element.setAttribute('download', `${values.filename || 'index'}.html`);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+      };
+      const button = document.querySelector('.download');
+      button.addEventListener('click', handleDownload);
+
+
+      /** PREVIEW **/
+      class App {
+        /**
+         *
+         * @type {{left: HTMLDivElement, right: HTMLDivElement}}
+         */
+        #sideToEl = {
+          right: null,
+          left: null,
+        };
+
+        /**
+         *
+         * @type {{left: HTMLDivElement[], right: HTMLDivElement[]}}
+         */
+        #bubbles = {
+          right: [],
+          left: [],
+        };
+
+        /**
+         *
+         * @param {number} bubbles
+         */
+        constructor(bubbles) {
+          this.#sideToEl.right = document.querySelector('#right .fill');
+          this.#sideToEl.left = document.querySelector('#left .fill');
+
+          if (bubbles) {
+            this.#initBubbles(bubbles, 'left');
+            this.#initBubbles(bubbles, 'right');
+
+            document.body.classList.add('liquid');
+          }
+
+          setInterval(() => {
+            this.#updatePercents();
+          }, 5000);
+        }
+
+        /**
+         *
+         * @param {'left' | 'right'} side
+         */
+        #initBubble(side) {
+          const bubble = document.createElement('div');
+          bubble.classList.add('bubble');
+
+          const size = Math.random() + 0.3;
+          bubble.style.setProperty('--size-bubbles', size);
+          const opacity = 0.6 + Math.random() * 0.4;
+          bubble.style.opacity = opacity;
+          const position = Math.random();
+          bubble.style[side] = `calc(${position} * 200px)`;
+
+          this.#sideToEl[side].appendChild(bubble);
+
+          this.#bubbles[side].push(bubble)
+        }
+
+        /**
+         *
+         * @param {number} count
+         * @param {'left' | 'right'} side
+         */
+        #initBubbles(count, side) {
+          for (let i = 0; i < count; i++) {
+            setTimeout(() => {
+              this.#initBubble(side);
+            }, 200 * i);
+          }
+        }
+
+        #getPercents = () => {
+          return Math.random() * 2 - 1;
+        }
+
+        /**
+         *
+         * @param {number} percents
+         */
+        #setPercents(percents) {
+          const percentsString = `${Math.abs(percents) * 100}%`;
+
+          let rightWidth = 0;
+          let leftWidth = 0;
+          if (percents >= 0) {
+            rightWidth = percentsString;
+          }
+          if (percents <= 0) {
+            leftWidth = percentsString;
+          }
+
+          this.#sideToEl.right.style.width = rightWidth;
+          this.#sideToEl.left.style.width = leftWidth;
+        }
+
+        #updatePercents() {
+          const percents = this.#getPercents();
+
+          this.#setPercents(percents);
+        }
+      }
+
+      const app = new App(50);
+    </script>
+  </body>
+</html>

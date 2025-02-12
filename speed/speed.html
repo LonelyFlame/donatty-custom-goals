@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html {
+        --arrow: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAAAAXNSR0IArs4c6QAAAPBlWElmTU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAABAAAAagEoAAMAAAABAAIAAAExAAIAAAAfAAAAcgEyAAIAAAAUAAAAkodpAAQAAAABAAAApgAAAAAAAABIAAAAAQAAAEgAAAABQWRvYmUgUGhvdG9zaG9wIDIzLjUgKFdpbmRvd3MpAAAyMDI1OjAyOjA4IDE5OjA2OjA3AAAEkAQAAgAAABQAAADcoAEAAwAAAAEAAQAAoAIABAAAAAEAAAH0oAMABAAAAAEAAAH0AAAAADIwMjU6MDI6MDggMTk6MDY6MDcA21GZ4wAAAAlwSFlzAAALEwAACxMBAJqcGAAACNNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDYuMC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICAgICAgICAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgICAgICAgICB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIj4KICAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9wbmc8L2RjOmZvcm1hdD4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMjUtMDItMDhUMTk6MDY6MDcrMDM6MDA8L3htcDpNb2RpZnlEYXRlPgogICAgICAgICA8eG1wOkNyZWF0b3JUb29sPkFkb2JlIFBob3Rvc2hvcCAyMy41IChXaW5kb3dzKTwveG1wOkNyZWF0b3JUb29sPgogICAgICAgICA8eG1wOkNyZWF0ZURhdGU+MjAyNS0wMi0wOFQxOTowNjowNyswMzowMDwveG1wOkNyZWF0ZURhdGU+CiAgICAgICAgIDx4bXA6TWV0YWRhdGFEYXRlPjIwMjUtMDItMDhUMTk6MDY6MDcrMDM6MDA8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx4bXBNTTpIaXN0b3J5PgogICAgICAgICAgICA8cmRmOlNlcT4KICAgICAgICAgICAgICAgPHJkZjpsaSByZGY6cGFyc2VUeXBlPSJSZXNvdXJjZSI+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDpzb2Z0d2FyZUFnZW50PkFkb2JlIFBob3Rvc2hvcCAyMy41IChXaW5kb3dzKTwvc3RFdnQ6c29mdHdhcmVBZ2VudD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OndoZW4+MjAyNS0wMi0wOFQxOTowNjowNyswMzowMDwvc3RFdnQ6d2hlbj4KICAgICAgICAgICAgICAgICAgPHN0RXZ0Omluc3RhbmNlSUQ+eG1wLmlpZDowMDg4NWVmZi0xNmE0LWFlNGQtOGQxOS1lYzlmOTVmMzkxNzM8L3N0RXZ0Omluc3RhbmNlSUQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDphY3Rpb24+Y3JlYXRlZDwvc3RFdnQ6YWN0aW9uPgogICAgICAgICAgICAgICA8L3JkZjpsaT4KICAgICAgICAgICAgICAgPHJkZjpsaSByZGY6cGFyc2VUeXBlPSJSZXNvdXJjZSI+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDpzb2Z0d2FyZUFnZW50PkFkb2JlIFBob3Rvc2hvcCAyMy41IChXaW5kb3dzKTwvc3RFdnQ6c29mdHdhcmVBZ2VudD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OmNoYW5nZWQ+Lzwvc3RFdnQ6Y2hhbmdlZD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OndoZW4+MjAyNS0wMi0wOFQxOTowNjowNyswMzowMDwvc3RFdnQ6d2hlbj4KICAgICAgICAgICAgICAgICAgPHN0RXZ0Omluc3RhbmNlSUQ+eG1wLmlpZDozMTI0ZGQ5ZS0xNGZmLTg3NGMtOTQzYy0yZjZjNWI0NzAwNWM8L3N0RXZ0Omluc3RhbmNlSUQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDphY3Rpb24+c2F2ZWQ8L3N0RXZ0OmFjdGlvbj4KICAgICAgICAgICAgICAgPC9yZGY6bGk+CiAgICAgICAgICAgIDwvcmRmOlNlcT4KICAgICAgICAgPC94bXBNTTpIaXN0b3J5PgogICAgICAgICA8eG1wTU06T3JpZ2luYWxEb2N1bWVudElEPnhtcC5kaWQ6MDA4ODVlZmYtMTZhNC1hZTRkLThkMTktZWM5Zjk1ZjM5MTczPC94bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ+CiAgICAgICAgIDx4bXBNTTpEb2N1bWVudElEPmFkb2JlOmRvY2lkOnBob3Rvc2hvcDpjNzk5NDRkYi1iNzJlLTE0NDUtODdiNC00YmYxN2NkYjdjY2Q8L3htcE1NOkRvY3VtZW50SUQ+CiAgICAgICAgIDx4bXBNTTpJbnN0YW5jZUlEPnhtcC5paWQ6MzEyNGRkOWUtMTRmZi04NzRjLTk0M2MtMmY2YzViNDcwMDVjPC94bXBNTTpJbnN0YW5jZUlEPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICAgICA8cGhvdG9zaG9wOkNvbG9yTW9kZT4zPC9waG90b3Nob3A6Q29sb3JNb2RlPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KMGz71gAAHG5JREFUeAHt3XmMVVWeAGBqL4qGYl9FkVFEVJbBhUaNEUUojIgLotMaE2VchmiUuJs4mhCZjBsB3NCotN0mDZ2xhz8cSWeUMZHpcWDUKIJBI4sICg6KslUBNb/zUq9TI7VQUFCvqr6XvLx3t3PP+e7L+91zz7nndujgRYAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIEclogL6dzJ3MtIvDUU08N3Lhx4/AVK1acvn///uGlpaXdCwsLq4uKijaVlJR8cNZZZ31WXl7+8YwZM35ukQzaaZ0CixYtKn7vvffGfvnll1du2LBh7LZt23rv3r27dxzDkvz8/P1x7LZ16dLlu0GDBq0eOXLk7y+44IJ3L7/88p/qTMxMAgQIEGi9Ao899tj4cePGLe7cufPWKEV1Q+/jjz9+1fTp0x945plnurbeErednM+cOXPy6aef/p8NHbNfLhswYMDau+66a8a7775b2nYklIQAAQLtWODZZ58dePbZZ/8uanENBvEgOmh5v379vrz33nuntWO+Fi3622+/3X3ixIm/revYHOq8UaNGvTd79uzBLVoQOydAgACBwxd48cUXi2699daZcfn8u0jloGDdlHkRVF6Kml7h4efGlk0VePnll7sPHTr0g6Ycp/rW7dmz5/pZs2aNaWoerE+AAAECLSzwxhtvDD/nnHP+GNk4okBee/vzzjvvlRYuVrvZfToZO//88/+ttv+Rfu/Ro8ea2267rXe7QVRQAgQItGaBefPm9b/mmmvmRwepnVGOZgvm2bSuu+66f27NPq0l70OGDHk6a96cn9H08vajjz6a31oc5JMAAQLtTuCee+45saKiYk7Xrl0b7fAWOIcd6KMn/P5LLrlkSrsDPoYFfuSRRyqO5Bg1tu3FF1981zEsjl0RIECAQGMCqab16quvjpw2bdqLHTt23BHrH3agbsq2J5xwwue33357t8byZ3nTBeKYFp5yyinLD/V4FBcX74lb1bbH8d91qNtE7/dNL730Up+m584WBAi0pIBOTC2pf5T2vXDhwh5xH/KUN998c+rHH388Pu5DPmaXUPPy8jqsX79+yLp1634TxZt/lIrYbpNdu3btNfH+dX0Ayb+6urpD3Hq46cILL/z9iBEj/tStW7cNmzdv7vXVV19N+Oijj6774osvRtS3fZq/adOm/kuXLr0xvmo+aQjKMgIECBwNgfnz5/e48cYbf3PuuecujBrZttjHMamN17efk0466b+PRjnbe5pxr/mS+syz86N9/S9xVebUuqwiUHeaMGHCouy69X32799/5dSpUwvqSsM8AgQIEGhGgaiF5S1YsGDIfffdl4L4ol69em2O5Fs0iNfef6dOnSqvv/76v23GIrfLpOISe+kTTzzRKUaBK7j//vtHlJWVNdiZMdy3TJo06YSGsN56662SdO957eP1y++RzvYYrGZgQ+lYRoBAbgm45J5bx6PO3MSfenFVVVW/uFe4/8qVKwfv2rXrwmHDho2MS9vpe062Ve/cubOoe/fup0WB/qfOQtWamdr6ly1blr9169b8VatWVabpb775pjTKVxpNByU//vhj5ne6ffv2vCh31WmnnVb5ww8/FO7duzc/7SeaFIrjsvKvwqb022+/zaQcVymq58yZU3XgwIHC2K4g1i/46aefir7//vui9Lljx46iPXv2FJ955pl7PvvsswExv+dxxx23K9LrGOkWR5oF6aQpEsuLNDJDJKeBd+I4FFZWVpZEGp1iCNVO0Tbd+eeff055SOvl17zzstORRkFsk7dv3768uAy+P6VZ806XxtP3zGfKdNpPmk77rJnu8Morr3SMy+ipprwv8tYnjndZWlbfK06iHo1b2tbXtzzNj4C/Ny7FzyooKFga+axz1Shj188//3xULNxY5wpmEiCQcwKZP46cy1XuZyi5Zf55U/CJIJS3ePHiAzXz8uJSZX4EmPwYDz0/xtLOi9pzXgSl/PiTzIvpTHt2nz59qiNAFKTp9Gc/evTokghWHWMc7q4RlLp8/fXXgyIQDI3thkRA6hsB7pQUvGv+8HNfKHIY5V47cODA1TEOfMSkFKuqM4EuBcsImgVR7oIIqkXhUpACYQqWcak3jQ9fEEGyS5S3U8wri+XFqdzJKWqOeyMw7o7vxbFN2q4klqcgXJaWx3SmDblVADVzJqP2vjt+e2dFH4pVjSU9duzY3qtXr/4gflv11uZjGOCX33nnnb9vLC3LCRDIDQEBvYnHYe7cuedHz/GHUgCK14EIIqlWVhC9iSsjcO2LAFUSAasoBadYlmqWmWCVglgEpYL4LEzBKR54kk4AUk0w1e5Sra9TBLGuKb2YbmKucm/1bOes3MtZ281R3759v4jBZs6Jk8v/PZRSxsnWijjpHF3fumecccaSTz755PL6lptPgEBuCbjk3sTj8dxzz926Zs2aiU3crN2tnk5avI65QPYk8lB2nE7mGzyhjyYTT9M7FEnrEMgRAQG9iQfi6quv/lPcozshLgd3jzbIqtj8QLqcXJNMdc337GeH7HSqzcc6aX72c1/UyjNtpjFqW3XUyjvG5feyVMOPWnoTc5W7q0e5M5lLl8K9jq5A9AMYFL+ddAn9u8b2dOWVVx4fj1o9rqH1onnj04aWW0aAQG4JCOhNPB7xAIs/Tp48eXncy9st2iz3RcDKBvNM8M5OZ4N8mq79jsvymcgWl9z3RyewTA0p2pqrUzvxmDFjSuNE4VcxMEvp+++/3yO2K9+yZcuvo019eLR1lkenqL7RuatHa6n9xgNbFkaZ5kbzQ3E8brUw7m9OnclS+3lqVsiPcuSFx/4YXS5jmLVLhyStE2UtiaaMA9EfYW9aJzVTxEnUQWcGNU0UmT4KKY3YpjpOklJzSIc4SSoIv9KwLgvLsrjMXBnvqphfFOtVffrpp2nejzGO+e5YpzR1cIv8prQK02fKS6SfTrwyNdpIM1uzTXlO36vjmBWdfPLJO+NWvfi6K9PckvoGxPPIu3z44YfD4lL493H5em3kP5Ksyo99/k0E367RyXF7rF8e5atK+0gWkX5B9JvoFuuVxrxMjTt+S0XRyS+59YqOamNSc0/K1y9fsU3qZ/B3Mb/RWwbjtzQtPS/9l2lkp+O3XRn5W5ad9kmAAAECzSRwxx13lNxwww0nPvjgg5MuvfTS++PBKn+OjnVfR4BL1fkUXHLuHaPFTW6m4ksmBG666abOMXTvNw0d6/R7iOfaT20I7PXXXx8fte8Gb3+LgL7tsssu69lQOpYRIECAQDMJRAe9LnfffffEeCDKIzEc6MrUMS+SzonAHrXS76ZPn35iMxVVMjUC8fCUuY0d41S7jqem3bl8+fKOteFWrFhRFPey3x7LGwzmKf2RI0f+ofa2vhMgQIDAMRJIzyKfPXv26FtuueUfI7j/V9TUWjSwxyXmxceo6O1qN3HyNi4Ccr1XZbJ9NgKlevDgwaumTJnyZIwg+NgVV1zxVDQJfJTmN/aOS//VcXWlol3BKiwBAgRyUSBGFSt+8sknR1977bVP1P4Tr/1nH/lu9I/9cNdJ7d3xbPSLc9GmLeQpaumNDv96uMcubRcD9yxtC07KQIAAgTYl8PTTT3eMwW8mDR8+/N+PVXt7BJzftSnEHCtM9KcYUV5enm4pa/aTshi0Z9drr71W773pOUYhOwQIEGh/AqmX9p133jkxxn3/c9Sg94ZAsweDlGa/fv02xC1RDd4O1f70m7/E0WHtH5r7GKYrOBUVFXc0f26lSIAAAQJHRSDa2sedeuqp/xGJN2tQj1urdjz++OMXHJVMS/Qggauuumpmza1+R3wcUzpxZWXWQTsxgwABAgRyWyA9veuBBx64JW5f2ho5PeKAEB2pKqPN/urcLnXby13U1O+JYJwZrOhwj2PcH78nbomc0fZ0lIgAAQLtSOD5558fMH78+Oejff2wb3nr3bv3+oceekiv6Bb63cybN68iHuzzl9h9k07M4iSsKmrlf4jbH9NT1bwIECBAoC0IRGA/+6KLLlrSlI5zMcjJ1ptvvvmforbfvS0YtOYyxBP/ih9++OHLYmS+f40Oc9uiLHUG9zQ6XtzO9uG0adPmvPDCC8Nac5nlnQCB/y+Qhq70IvBXgQULFoxcsmTJuBgmdcLmzZv7x1CiZTFca2bEsAgUWyIg7I4R6taOGjXqX+Le5mUxvOvmv27sS04IxPDEA2NI2aHr1q3rF49ITePRlsTYBBtj+N0N6R3Ta+LOhz05kVmZIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQOHYC/wfyTXs3y8HFmgAAAABJRU5ErkJggg==);
+      }
+    </style>
+    <style>
+      html {
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        position: relative;
+        border-radius: 100vw 100vw 0 0;
+        overflow: hidden;
+      }
+
+      .arrow {
+        background-image: var(--arrow);
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 200%;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        transition: transform 2s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="arrow" id="arrow">
+      </div>
+    </div>
+    <script>
+      const ref = 'ref_token';
+      const token = 'auth_token';
+    </script>
+    <script>
+      const MESSAGE_TYPES = {
+        DATA: 'DATA',
+        PING: 'PING',
+        REFRESH: 'REFRESH',
+        DELETE: 'DELETE',
+      };
+
+      /**
+       *
+       * @param {string} ref
+       * @returns {string}
+       */
+      const fmtApiUri = (ref) => {
+        const baseUri = "https://api.donatty.com";
+        const G = 1;
+        const q = 30;
+
+        const n = ref.length;
+        const r = n - 2;
+        const i = ref.slice(r, n);
+        const o = parseInt(i, 16);
+        const s = G + o % (q - G);
+        const a = new Intl.NumberFormat("en-IN",{ minimumIntegerDigits: 3 }).format(s);
+
+        return baseUri.replace("://api.", `://api-${a}.`);
+      }
+
+      class AuthClient {
+        #authEndpoint = 'https://api.donatty.com/auth/tokens';
+        #authToken = '';
+        #jwtToken = '';
+
+        get jwt() {
+          return this.#jwtToken
+        }
+
+        constructor(authToken) {
+          this.#authToken = authToken;
+        }
+
+        async #fetchJwtToken() {
+          try {
+            const response = await fetch(`${this.#authEndpoint}/${this.#authToken}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            const { response: { accessToken } } = await response.json();
+
+            this.#jwtToken = accessToken;
+          } catch (error) {
+            console.error('Failed to fetch JWT token:', error);
+
+            throw error;
+          }
+        }
+
+        async auth() {
+          if (!this.#authToken) {
+            console.error('Token is missing in the URL');
+            return;
+          }
+
+          await this.#fetchJwtToken();
+        }
+      }
+
+      class SSEClient {
+        #sseEndpoint = '';
+        #zoneOffset = this.#getTimeZoneOffset();
+        #reconnectInterval = 10 * 60 * 1000;
+
+        /**
+         *
+         * @type {number | null} timeout ID
+         */
+        #reconnectionTimeout = null;
+
+        /**
+         *
+         * @type {AuthClient}
+         */
+        #authClient = null;
+
+        /**
+         *
+         * @type {EventSource}
+         */
+        #eventSource = null;
+
+        constructor(authClient, refToken) {
+          this.#authClient = authClient;
+
+          this.#sseEndpoint = `${fmtApiUri(refToken)}/widgets/${refToken}/sse`;
+        }
+
+        #getTimeZoneOffset() {
+          return (new Date).getTimezoneOffset()
+        }
+
+        #connectToSSE() {
+          if (this.#eventSource) {
+            this.#eventSource.close();
+          }
+
+          const jwt = this.#authClient.jwt;
+
+          const eventSource = new EventSource(
+            `${this.#sseEndpoint}?jwt=${jwt}&zoneOffset=${this.#zoneOffset}`
+          );
+
+          eventSource.onmessage = (event) => {
+            this.onMessage(event.data);
+          };
+
+          eventSource.onerror = (e) => {
+            console.error('SSE error', e);
+            console.error('reconnecting...');
+
+            this.#eventSource.close();
+
+            this.#clearReconnectTimeout();
+            setTimeout(() => this.#connectToSSE(), 5000);
+          };
+
+          this.#eventSource = eventSource;
+
+          this.#scheduleReconnect();
+        }
+
+        #scheduleReconnect() {
+          this.#clearReconnectTimeout();
+
+          this.#reconnectionTimeout = setTimeout(() => {
+            console.info('Reconnecting SSE after 10 minutes...');
+
+            this.#connectToSSE(this.#authClient.jwt);
+          }, this.#reconnectInterval);
+        }
+
+        #clearReconnectTimeout() {
+          if (!this.#reconnectionTimeout) {
+            return;
+          }
+
+          clearTimeout(this.#reconnectionTimeout);
+          this.#reconnectionTimeout = null;
+        }
+
+        /**
+         *
+         * @param {string} message
+         * @returns {{goal: undefined, raised: undefined, type: 'PING'}}
+         * @returns {{goal: number?, raised: number, type: 'DATA'}}
+         */
+        #prepareMessage(message) {
+          const { action, data } = JSON.parse(message);
+
+          let type;
+          let goal;
+          let raised;
+
+          switch (action) {
+            case MESSAGE_TYPES.REFRESH: {
+              type = MESSAGE_TYPES.DATA;
+              raised = data.props.data.goalCollected;
+              goal = data.props.data.goal;
+
+              break;
+            }
+            case MESSAGE_TYPES.DATA: {
+              type = MESSAGE_TYPES.DATA;
+              raised = data.raised;
+
+              break;
+            }
+            default: {
+              type = MESSAGE_TYPES.PING;
+            }
+          }
+
+          return { type, goal, raised };
+        }
+
+        /**
+         *
+         * @param {string} message
+         */
+        onMessage(message) {
+          const { type, goal, raised } = this.#prepareMessage(message);
+
+          if (type !== 'DATA') {
+            return;
+          }
+
+          this.onData(raised, goal);
+        }
+
+        /**
+         *
+         * @param {number} raised
+         * @param {number?} goal
+         */
+        onData(raised, goal) {
+          console.log('New data:', { raised, goal });
+        }
+
+        async start() {
+          if (!this.#authClient) {
+            console.error('Auth is missing in the URL');
+            return;
+          }
+
+          this.#connectToSSE();
+        }
+      }
+
+      class DataClient {
+        #apiEndpoint = ''
+        #authToken = '';
+        #refToken = '';
+
+        goal = 0;
+        raised = 0;
+
+        /**
+         *
+         * @type {AuthClient}
+         */
+        #authClient = null;
+
+        /**
+         *
+         * @type {SSEClient}
+         */
+        #sseClient = null;
+
+        get percent() {
+          return (this.raised / this.goal) || 0;
+        }
+
+        get ref() {
+          return this.#refToken;
+        }
+
+        /**
+         *
+         * @param {string} token
+         * @param {string} ref
+         */
+        constructor(token, ref) {
+          this.#authToken = token;
+          this.#refToken = ref;
+
+          this.#apiEndpoint = `${fmtApiUri(this.#refToken)}/widgets/${this.#refToken}`;
+
+          this.#init();
+        }
+
+        async #init() {
+          try {
+            this.#authClient = new AuthClient(this.#authToken);
+            await this.#authClient.auth();
+
+            await this.#getData();
+          } catch (e) {
+            console.error('SWW on init, retry...');
+
+            this.#authClient = null;
+
+            setTimeout(() => this.#init(), 5000);
+
+            return;
+          }
+
+          const sseClient = new SSEClient(this.#authClient, this.#refToken);
+          sseClient.onData = (newRaised, newGoal) => this.#update(newRaised, newGoal);
+
+          sseClient.start();
+
+          this.#sseClient = sseClient;
+        }
+
+        async #getData() {
+          try {
+            const response = await fetch(this.#apiEndpoint, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.#authClient.jwt}`,
+              },
+            });
+
+            const { response: { props: { data: { goal, goalCollected } } } } = await response.json();
+
+            this.#update(goalCollected, goal);
+          } catch (error) {
+            console.error('Failed to fetch initial data:', error);
+
+            throw error;
+          }
+        }
+
+        /**
+         *
+         * @param {number} newRaised
+         * @param {number?} newGoal
+         */
+        #update(newRaised, newGoal) {
+          this.raised = newRaised;
+
+          if (newGoal) {
+            this.goal = newGoal;
+          }
+
+          document.dispatchEvent(new CustomEvent(
+            'goal_updated',
+            {
+              detail: {
+                goal: this.goal,
+                raised: this.raised,
+                percent: this.percent,
+                ref: this.#refToken,
+              },
+            },
+          ));
+        }
+      }
+
+      class App {
+        /**
+         *
+         * @type {number}
+         */
+        #limit = 0;
+
+        /**
+         *
+         * @type {DataClient}
+         */
+        #dataClient = null;
+
+        /**
+         *
+         * @type {HTMLDivElement}
+         */
+        #arrow = null;
+
+        constructor() {
+          this.#dataClient = this.#initClient(token, ref);
+          this.#arrow = document.querySelector('#arrow');
+
+          document.addEventListener('goal_updated', () => this.#updatePercents());
+        }
+
+        /**
+         *
+         * @param {string} authToken
+         * @param {string} refToken
+         * @returns {DataClient}
+         */
+        #initClient(authToken, refToken)
+        {
+          return new DataClient(authToken, refToken);
+        }
+
+        /**
+         *
+         * @returns {number}
+         */
+        #getRotate = () => {
+          const percents = Math.min(this.#dataClient.percent, 1);
+
+          return 180 * percents;
+        }
+
+        /**
+         *
+         * @param {number} rotate
+         */
+        #setRotates(rotate) {
+          this.#arrow.style.transform = `rotate(${rotate}deg)`;
+        }
+
+        #updatePercents() {
+          const rotate = this.#getRotate();
+
+          this.#setRotates(rotate);
+        }
+      }
+
+      const app = new App();
+    </script>
+  </body>
+</html>

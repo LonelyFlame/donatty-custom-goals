@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html {
+        --color-right: yellow;
+        --color-left: red;
+        --color-bubbles: gray;
+        --size-bubbles: 1;
+        --size-wave: 0.8vw;
+      }
+
+      html {
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      .container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        position: relative;
+      }
+
+      .item {
+        height: 100%;
+        width: 100%;
+        display: flex;
+      }
+      .item.left {
+        justify-content: flex-end;
+      }
+      .item.right {
+        justify-content: flex-start;
+      }
+
+      .fill {
+        height: 100%;
+        transition: width 1s;
+        overflow: hidden;
+        position: relative;
+
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      .right .fill {
+        background-color: var(--color-right);
+      }
+      .left .fill {
+        background-color: var(--color-left);
+      }
+
+      .liquid .fill {
+        transition: width 3s cubic-bezier(0.5, 0, 0.5, 1.5);
+      }
+      .liquid .right .fill {
+        animation-name: rightWave;
+      }
+      .liquid .left .fill {
+        animation-name: leftWave;
+      }
+
+      .bubble {
+        position: absolute;
+        background-color: transparent;
+        height: calc(var(--size-bubbles) * 5vh);
+        width: calc(var(--size-bubbles) * 5vh);
+        border-radius: 50%;
+        box-shadow: var(--color-bubbles) 1px -1px 2px 1px;
+
+        animation-name: shaking, surfacing;
+        animation-duration: calc(var(--size-bubbles) * 2s), calc(var(--size-bubbles) * 10s);
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      @keyframes shaking {
+        0% {
+          transform: translateX(calc(var(--size-bubbles) * 100%));
+        }
+
+        50% {
+          transform: translateX(calc(var(--size-bubbles) * -100%));
+        }
+
+        100% {
+          transform: translateX(calc(var(--size-bubbles) * 100%));
+        }
+      }
+
+      @keyframes surfacing {
+        0% {
+          bottom: calc(var(--size-bubbles) * -1vh);
+        }
+
+        100% {
+          bottom: calc(var(--size-bubbles) * -1vh + 100vh);
+        }
+      }
+
+      @keyframes rightWave {
+        0%, 100% {
+          clip-path: polygon(
+            0 0,
+            100% 0,
+            calc(100% - var(--size-wave) * 0.5) 6%,
+            calc(100% - var(--size-wave) * 0.3) 14%,
+            calc(100% - var(--size-wave) * 0.3) 20%,
+            calc(100% - var(--size-wave) * 0.5) 25%,
+            calc(100% - var(--size-wave) * 0.8) 31%,
+            calc(100% - var(--size-wave) * 0.9) 37%,
+            calc(100% - var(--size-wave) * 0.8) 42%,
+            calc(100% - var(--size-wave) * 0.4) 47%,
+            calc(100% - var(--size-wave) * 0.1) 56%,
+            calc(100% - var(--size-wave) * 0.3) 63%,
+            calc(100% - var(--size-wave) * 0.6) 67%,
+            calc(100% - var(--size-wave) * 0.8) 73%,
+            calc(100% - var(--size-wave) * 0.9) 79%,
+            calc(100% - var(--size-wave) * 0.8) 86%,
+            calc(100% - var(--size-wave) * 0.5) 93%,
+            calc(100% - var(--size-wave) * 0.4) 100%,
+            0 100%
+          );
+        }
+
+        25% {
+          clip-path: polygon(
+            0 0,
+            calc(100% - var(--size-wave) * 0.6) 0,
+            calc(100% - var(--size-wave) * 0.6) 6%,
+            calc(100% - var(--size-wave) * 0.8) 12%,
+            calc(100% - var(--size-wave) * 1) 18%,
+            calc(100% - var(--size-wave) * 0.9) 25%,
+            calc(100% - var(--size-wave) * 0.6) 30%,
+            calc(100% - var(--size-wave) * 0.5) 36%,
+            calc(100% - var(--size-wave) * 0.5) 41%,
+            calc(100% - var(--size-wave) * 0.8) 48%,
+            calc(100% - var(--size-wave) * 0.9) 54%,
+            calc(100% - var(--size-wave) * 0.8) 60%,
+            calc(100% - var(--size-wave) * 0.6) 66%,
+            calc(100% - var(--size-wave) * 0.5) 73%,
+            calc(100% - var(--size-wave) * 0.6) 79%,
+            calc(100% - var(--size-wave) * 0.7) 86%,
+            calc(100% - var(--size-wave) * 0.9) 93%,
+            100% 100%,
+            0 100%
+          );
+        }
+
+        50% {
+          clip-path: polygon(
+            0 0,
+            calc(100% - var(--size-wave) * 0.3) 0,
+            calc(100% - var(--size-wave) * 0.4) 6%,
+            calc(100% - var(--size-wave) * 0.6) 12%,
+            calc(100% - var(--size-wave) * 0.9) 18%,
+            calc(100% - var(--size-wave) * 1) 25%,
+            calc(100% - var(--size-wave) * 0.8) 31%,
+            calc(100% - var(--size-wave) * 0.5) 36%,
+            calc(100% - var(--size-wave) * 0.3) 43%,
+            calc(100% - var(--size-wave) * 0.5) 49%,
+            calc(100% - var(--size-wave) * 0.8) 54%,
+            calc(100% - var(--size-wave) * 1) 60%,
+            calc(100% - var(--size-wave) * 0.9) 66%,
+            calc(100% - var(--size-wave) * 0.8) 73%,
+            calc(100% - var(--size-wave) * 0.5) 79%,
+            calc(100% - var(--size-wave) * 0.4) 86%,
+            calc(100% - var(--size-wave) * 0.6) 93%,
+            100% 100%,
+            0 100%
+          );
+        }
+
+        75% {
+          clip-path: polygon(
+            0 0,
+            calc(100% - var(--size-wave) * 0.9) 0,
+            calc(100% - var(--size-wave) * 0.7) 6%,
+            calc(100% - var(--size-wave) * 0.6) 12%,
+            calc(100% - var(--size-wave) * 0.5) 18%,
+            calc(100% - var(--size-wave) * 0.6) 25%,
+            calc(100% - var(--size-wave) * 0.8) 30%,
+            calc(100% - var(--size-wave) * 0.9) 36%,
+            calc(100% - var(--size-wave) * 0.8) 41%,
+            calc(100% - var(--size-wave) * 0.5) 48%,
+            calc(100% - var(--size-wave) * 0.5) 54%,
+            calc(100% - var(--size-wave) * 0.6) 60%,
+            calc(100% - var(--size-wave) * 0.9) 66%,
+            calc(100% - var(--size-wave) * 1) 73%,
+            calc(100% - var(--size-wave) * 0.8) 79%,
+            calc(100% - var(--size-wave) * 0.6) 86%,
+            calc(100% - var(--size-wave) * 0.6) 93%,
+            100% 100%,
+            0 100%
+          );
+        }
+      }
+
+      @keyframes leftWave {
+        0%, 100% {
+          clip-path: polygon(
+            100% 0,
+            calc(var(--size-wave) * 0.3) 0,
+            calc(var(--size-wave) * 0.4) 6%,
+            calc(var(--size-wave) * 0.6) 12%,
+            calc(var(--size-wave) * 0.9) 18%,
+            calc(var(--size-wave) * 1) 25%,
+            calc(var(--size-wave) * 0.8) 31%,
+            calc(var(--size-wave) * 0.5) 36%,
+            calc(var(--size-wave) * 0.3) 43%,
+            calc(var(--size-wave) * 0.5) 49%,
+            calc(var(--size-wave) * 0.8) 54%,
+            calc(var(--size-wave) * 1) 60%,
+            calc(var(--size-wave) * 0.9) 66%,
+            calc(var(--size-wave) * 0.8) 73%,
+            calc(var(--size-wave) * 0.5) 79%,
+            calc(var(--size-wave) * 0.4) 86%,
+            calc(var(--size-wave) * 0.6) 93%,
+            0 100%,
+            100% 100%
+          );
+        }
+
+        25% {
+          clip-path: polygon(
+            100% 0,
+            calc(var(--size-wave) * 0.9) 0,
+            calc(var(--size-wave) * 0.7) 6%,
+            calc(var(--size-wave) * 0.6) 12%,
+            calc(var(--size-wave) * 0.5) 18%,
+            calc(var(--size-wave) * 0.6) 25%,
+            calc(var(--size-wave) * 0.8) 30%,
+            calc(var(--size-wave) * 0.9) 36%,
+            calc(var(--size-wave) * 0.8) 41%,
+            calc(var(--size-wave) * 0.5) 48%,
+            calc(var(--size-wave) * 0.5) 54%,
+            calc(var(--size-wave) * 0.6) 60%,
+            calc(var(--size-wave) * 0.9) 66%,
+            calc(var(--size-wave) * 1) 73%,
+            calc(var(--size-wave) * 0.8) 79%,
+            calc(var(--size-wave) * 0.6) 86%,
+            calc(var(--size-wave) * 0.6) 93%,
+            0 100%,
+            100% 100%
+          );
+        }
+
+        50% {
+          clip-path: polygon(
+            100% 0,
+            0 0,
+            calc(var(--size-wave) * 0.5) 6%,
+            calc(var(--size-wave) * 0.3) 14%,
+            calc(var(--size-wave) * 0.3) 20%,
+            calc(var(--size-wave) * 0.5) 25%,
+            calc(var(--size-wave) * 0.8) 31%,
+            calc(var(--size-wave) * 0.9) 37%,
+            calc(var(--size-wave) * 0.8) 42%,
+            calc(var(--size-wave) * 0.4) 47%,
+            calc(var(--size-wave) * 0.1) 56%,
+            calc(var(--size-wave) * 0.3) 63%,
+            calc(var(--size-wave) * 0.6) 67%,
+            calc(var(--size-wave) * 0.8) 73%,
+            calc(var(--size-wave) * 0.9) 79%,
+            calc(var(--size-wave) * 0.8) 86%,
+            calc(var(--size-wave) * 0.5) 93%,
+            calc(var(--size-wave) * 0.4) 100%,
+            100% 100%
+          );
+        }
+
+        75% {
+          clip-path: polygon(
+            100% 0,
+            calc(var(--size-wave) * 0.6) 0,
+            calc(var(--size-wave) * 0.6) 6%,
+            calc(var(--size-wave) * 0.8) 12%,
+            calc(var(--size-wave) * 1) 18%,
+            calc(var(--size-wave) * 0.9) 25%,
+            calc(var(--size-wave) * 0.6) 30%,
+            calc(var(--size-wave) * 0.5) 36%,
+            calc(var(--size-wave) * 0.5) 41%,
+            calc(var(--size-wave) * 0.8) 48%,
+            calc(var(--size-wave) * 0.9) 54%,
+            calc(var(--size-wave) * 0.8) 60%,
+            calc(var(--size-wave) * 0.6) 66%,
+            calc(var(--size-wave) * 0.5) 73%,
+            calc(var(--size-wave) * 0.6) 79%,
+            calc(var(--size-wave) * 0.7) 86%,
+            calc(var(--size-wave) * 0.9) 93%,
+            0 100%,
+            100% 100%
+          );
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="item left" id="left">
+        <div style="width: 0;" class="fill"></div>
+      </div>
+      <div class="item right" id="right">
+        <div style="width: 0;" class="fill"></div>
+      </div>
+    </div>
+    <script>
+      const refLeft = 'ref_token';
+      const tokenLeft = 'auth_token';
+      const refRight = 'ref_token';
+      const tokenRight = 'auth_token';
+      const limit = 500000;
+      const bubbles = 50;
+      const liquid = true;
+    </script>
+    <script>
+      const MESSAGE_TYPES = {
+        DATA: 'DATA',
+        PING: 'PING',
+        REFRESH: 'REFRESH',
+        DELETE: 'DELETE',
+      };
+
+      /**
+       *
+       * @param {string} ref
+       * @returns {string}
+       */
+      const fmtApiUri = (ref) => {
+        const baseUri = "https://api.donatty.com";
+        const G = 1;
+        const q = 30;
+
+        const n = ref.length;
+        const r = n - 2;
+        const i = ref.slice(r, n);
+        const o = parseInt(i, 16);
+        const s = G + o % (q - G);
+        const a = new Intl.NumberFormat("en-IN",{ minimumIntegerDigits: 3 }).format(s);
+
+        return baseUri.replace("://api.", `://api-${a}.`);
+      }
+
+      class AuthClient {
+        #authEndpoint = 'https://api.donatty.com/auth/tokens';
+        #authToken = '';
+        #jwtToken = '';
+
+        get jwt() {
+          return this.#jwtToken
+        }
+
+        constructor(authToken) {
+          this.#authToken = authToken;
+        }
+
+        async #fetchJwtToken() {
+          try {
+            const response = await fetch(`${this.#authEndpoint}/${this.#authToken}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            const { response: { accessToken } } = await response.json();
+
+            this.#jwtToken = accessToken;
+          } catch (error) {
+            console.error('Failed to fetch JWT token:', error);
+
+            throw error;
+          }
+        }
+
+        async auth() {
+          if (!this.#authToken) {
+            console.error('Token is missing in the URL');
+            return;
+          }
+
+          await this.#fetchJwtToken();
+        }
+      }
+
+      class SSEClient {
+        #sseEndpoint = '';
+        #zoneOffset = this.#getTimeZoneOffset();
+        #reconnectInterval = 10 * 60 * 1000;
+
+        /**
+         *
+         * @type {number | null} timeout ID
+         */
+        #reconnectionTimeout = null;
+
+        /**
+         *
+         * @type {AuthClient}
+         */
+        #authClient = null;
+
+        /**
+         *
+         * @type {EventSource}
+         */
+        #eventSource = null;
+
+        constructor(authClient, refToken) {
+          this.#authClient = authClient;
+
+          this.#sseEndpoint = `${fmtApiUri(refToken)}/widgets/${refToken}/sse`;
+        }
+
+        #getTimeZoneOffset() {
+          return (new Date).getTimezoneOffset()
+        }
+
+        #connectToSSE() {
+          if (this.#eventSource) {
+            this.#eventSource.close();
+          }
+
+          const jwt = this.#authClient.jwt;
+
+          const eventSource = new EventSource(
+            `${this.#sseEndpoint}?jwt=${jwt}&zoneOffset=${this.#zoneOffset}`
+          );
+
+          eventSource.onmessage = (event) => {
+            this.onMessage(event.data);
+          };
+
+          eventSource.onerror = (e) => {
+            console.error('SSE error', e);
+            console.error('reconnecting...');
+
+            this.#eventSource.close();
+
+            this.#clearReconnectTimeout();
+            setTimeout(() => this.#connectToSSE(), 5000);
+          };
+
+          this.#eventSource = eventSource;
+
+          this.#scheduleReconnect();
+        }
+
+        #scheduleReconnect() {
+          this.#clearReconnectTimeout();
+
+          this.#reconnectionTimeout = setTimeout(() => {
+            console.info('Reconnecting SSE after 10 minutes...');
+
+            this.#connectToSSE(this.#authClient.jwt);
+          }, this.#reconnectInterval);
+        }
+
+        #clearReconnectTimeout() {
+          if (!this.#reconnectionTimeout) {
+            return;
+          }
+
+          clearTimeout(this.#reconnectionTimeout);
+          this.#reconnectionTimeout = null;
+        }
+
+        /**
+         *
+         * @param {string} message
+         * @returns {{goal: undefined, raised: undefined, type: 'PING'}}
+         * @returns {{goal: number?, raised: number, type: 'DATA'}}
+         */
+        #prepareMessage(message) {
+          const { action, data } = JSON.parse(message);
+
+          let type;
+          let goal;
+          let raised;
+
+          switch (action) {
+            case MESSAGE_TYPES.REFRESH: {
+              type = MESSAGE_TYPES.DATA;
+              raised = data.props.data.goalCollected;
+              goal = data.props.data.goal;
+
+              break;
+            }
+            case MESSAGE_TYPES.DATA: {
+              type = MESSAGE_TYPES.DATA;
+              raised = data.raised;
+
+              break;
+            }
+            default: {
+              type = MESSAGE_TYPES.PING;
+            }
+          }
+
+          return { type, goal, raised };
+        }
+
+        /**
+         *
+         * @param {string} message
+         */
+        onMessage(message) {
+          const { type, goal, raised } = this.#prepareMessage(message);
+
+          if (type !== 'DATA') {
+            return;
+          }
+
+          this.onData(raised, goal);
+        }
+
+        /**
+         *
+         * @param {number} raised
+         * @param {number?} goal
+         */
+        onData(raised, goal) {
+          console.log('New data:', { raised, goal });
+        }
+
+        async start() {
+          if (!this.#authClient) {
+            console.error('Auth is missing in the URL');
+            return;
+          }
+
+          this.#connectToSSE();
+        }
+      }
+
+      class DataController {
+        #apiEndpoint = ''
+        #authToken = '';
+        #refToken = '';
+
+        goal = 0;
+        raised = 0;
+
+        /**
+         *
+         * @type {AuthClient}
+         */
+        #authClient = null;
+
+        /**
+         *
+         * @type {SSEClient}
+         */
+        #sseClient = null;
+
+        get percent() {
+          return (this.raised / this.goal) || 0;
+        }
+
+        get ref() {
+          return this.#refToken;
+        }
+
+        /**
+         *
+         * @param {string} token
+         * @param {string} ref
+         */
+        constructor(token, ref) {
+          this.#authToken = token;
+          this.#refToken = ref;
+
+          this.#apiEndpoint = `${fmtApiUri(this.#refToken)}/widgets/${this.#refToken}`;
+
+          this.#init();
+        }
+
+        async #init() {
+          try {
+            this.#authClient = new AuthClient(this.#authToken);
+            await this.#authClient.auth();
+
+            await this.#getData();
+          } catch (e) {
+            console.error('SWW on init, retry...');
+
+            this.#authClient = null;
+
+            setTimeout(() => this.#init(), 5000);
+
+            return;
+          }
+
+          const sseClient = new SSEClient(this.#authClient, this.#refToken);
+          sseClient.onData = (newRaised, newGoal) => this.#update(newRaised, newGoal);
+
+          sseClient.start();
+
+          this.#sseClient = sseClient;
+        }
+
+        async #getData() {
+          try {
+            const response = await fetch(this.#apiEndpoint, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.#authClient.jwt}`,
+              },
+            });
+
+            const { response: { props: { data: { goal, goalCollected } } } } = await response.json();
+
+            this.#update(goalCollected, goal);
+          } catch (error) {
+            console.error('Failed to fetch initial data:', error);
+
+            throw error;
+          }
+        }
+
+        /**
+         *
+         * @param {number} newRaised
+         * @param {number?} newGoal
+         */
+        #update(newRaised, newGoal) {
+          this.raised = newRaised;
+
+          if (newGoal) {
+            this.goal = newGoal;
+          }
+
+          document.dispatchEvent(new CustomEvent(
+            'goal_updated',
+            {
+              detail: {
+                goal: this.goal,
+                raised: this.raised,
+                percent: this.percent,
+                ref: this.#refToken,
+              },
+            },
+          ));
+        }
+      }
+
+      class App {
+        /**
+         *
+         * @type {number}
+         */
+        #limit = 0;
+
+        /**
+         *
+         * @type {DataController}
+         */
+        #right = null;
+        /**
+         *
+         * @type {DataController}
+         */
+        #left = null;
+
+        /**
+         *
+         * @type {{left: HTMLDivElement, right: HTMLDivElement}}
+         */
+        #sideToEl = {
+          right: null,
+          left: null,
+        };
+
+        /**
+         *
+         * @type {{left: HTMLDivElement[], right: HTMLDivElement[]}}
+         */
+        #bubbles = {
+          right: [],
+          left: [],
+        };
+
+        /**
+         *
+         * @param {number} limit
+         * @param {number} bubbles
+         */
+        constructor(limit, bubbles) {
+          this.#limit = limit;
+
+          this.#right = this.#initClient(tokenRight, refRight);
+          this.#sideToEl.right = document.querySelector('#right .fill');
+
+          this.#left = this.#initClient(tokenLeft, refLeft);
+          this.#sideToEl.left = document.querySelector('#left .fill');
+
+          if (bubbles) {
+            this.#initBubbles(bubbles, 'left');
+            this.#initBubbles(bubbles, 'right');
+
+            document.body.classList.add('liquid');
+          }
+
+          document.addEventListener('goal_updated', () => this.#updatePercents());
+        }
+
+        /**
+         *
+         * @param {string} authToken
+         * @param {string} refToken
+         * @returns {DataController}
+         */
+        #initClient(authToken, refToken)
+        {
+          return new DataController(authToken, refToken);
+        }
+
+        /**
+         *
+         * @param {'left' | 'right'} side
+         */
+        #initBubble(side) {
+          const bubble = document.createElement('div');
+          bubble.classList.add('bubble');
+
+          const size = Math.random() + 0.3;
+          bubble.style.setProperty('--size-bubbles', size);
+          const opacity = 0.6 + Math.random() * 0.4;
+          bubble.style.opacity = opacity;
+          const position = Math.random();
+          bubble.style[side] = `calc(${position} * 50vw)`;
+
+          this.#sideToEl[side].appendChild(bubble);
+
+          this.#bubbles[side].push(bubble)
+        }
+
+        /**
+         *
+         * @param {number} count
+         * @param {'left' | 'right'} side
+         */
+        #initBubbles(count, side) {
+          for (let i = 0; i < count; i++) {
+            setTimeout(() => {
+              this.#initBubble(side);
+            }, 200 * i);
+          }
+        }
+
+        #getPercents() {
+          const diff = this.#left.raised - this.#right.raised;
+
+          return Math.max(Math.min(diff / this.#limit, 1), -1);
+        }
+
+        /**
+         *
+         * @param {number} percents
+         */
+        #setPercents(percents) {
+          const percentsString = `${Math.abs(percents) * 100}%`;
+
+          let rightWidth = 0;
+          let leftWidth = 0;
+          if (percents >= 0) {
+            rightWidth = percentsString;
+          }
+          if (percents <= 0) {
+            leftWidth = percentsString;
+          }
+
+          this.#sideToEl.right.style.width = rightWidth;
+          this.#sideToEl.left.style.width = leftWidth;
+        }
+
+        #updatePercents() {
+          const percents = this.#getPercents();
+
+          this.#setPercents(percents);
+        }
+      }
+
+      const app = new App(limit, liquid ? bubbles : 0);
+    </script>
+  </body>
+</html>

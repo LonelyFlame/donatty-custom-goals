@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .ed {
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+      }
+      .ed_col {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .ed_col label {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <label>
+      Имя файла:
+      <input type="text" value="" class="filename">
+    </label>
+    <label>
+      Цена заполненной стороны (левая-правая=):
+      <input type="number" value="20000" class="limit">
+    </label>
+    <div class="ed">
+      <div class="left ed_col">
+        <h3>Левый</h3>
+        <label>
+          ref:
+          <input type="text" class="ref_left">
+        </label>
+        <label>
+          token:
+          <input type="text" class="token_left">
+        </label>
+        <label>
+          token:
+          <input type="color" class="color_left" value="#000000">
+        </label>
+      </div>
+
+      <div class="right ed_col">
+        <h3>Правый</h3>
+        <label>
+          ref:
+          <input type="text" class="ref_right">
+        </label>
+        <label>
+          token:
+          <input type="text" class="token_right">
+        </label>
+        <label>
+          token:
+          <input type="color" class="color_right" value="#ffffff">
+        </label>
+      </div>
+    </div>
+
+    <button class="download">Скачать</button>
+
+    <script>
+      const POSITIONS = ['right', 'left'];
+      const TYPES = ['ref', 'token', 'color'];
+
+      const values = {
+        limit: 20000,
+        filename: '',
+        right: {
+          ref: '',
+          token: '',
+          color: '#ffffff',
+        },
+        left: {
+          ref: '',
+          token: '',
+          color: '#000000',
+        },
+      };
+
+      /**
+       *
+       * @param {'left'|'right'} position
+       * @param {'ref'|'token'|'color'} type
+       */
+      const listenInputChange = (position, type) => {
+        const input = document.querySelector(`.${type}_${position}`);
+        input.addEventListener('change', ({ target: { value } }) => {
+          values[position][type] = value;
+        });
+      };
+
+      const inputFilename = document.querySelector(`.filename`);
+      inputFilename.addEventListener('change', ({ target: { value } }) => {
+        values.filename = value;
+      });
+      const inputLimit = document.querySelector(`.limit`);
+      inputLimit.addEventListener('change', ({ target: { value } }) => {
+        values.limit = value;
+      });
+      POSITIONS.forEach(position => {
+        TYPES.forEach(type => {
+          listenInputChange(position, type);
+        });
+      });
+
+      const buildStyles = () => {
+        return `<style>html {--color-right: ${values.right.color};--color-left: ${values.left.color};}</style>`;
+      };
+
+      const buildJSVars = () => {
+        return `<script>const refLeft="${values.left.ref}",tokenLeft="${values.left.token}",refRight="${values.right.ref}",tokenRight="${values.right.token}",limit=${values.limit};</` + 'script>';
+      };
+
+      const buildPage = () => {
+        const head = "<!DOCTYPE html><html><head><style>html{--color-right:yellow;--color-left:red}html{height:100%;background-color:rgba(0,0,0,0)}body{height:100%;width:100%;margin:0;background-color:rgba(0,0,0,0)}.container{height:100%;width:100%;display:flex;position:relative}.item{height:100%;width:100%;display:flex}.item.left{justify-content:flex-end}.item.right{justify-content:flex-start}.fill{height:100%;transition:width 1s}.right .fill{background-color:var(--color-right)}.left .fill{background-color:var(--color-left)}</style>";
+        const body = "</head><body><div class=\"container\"><div class=\"item left\" id=\"left\"><div style=\"width: 0;\" class=\"fill\"></div></div><div class=\"item right\" id=\"right\"><div style=\"width: 0;\" class=\"fill\"></div></div></div>";
+        const scripts = "<script>const MESSAGE_TYPES={DATA:\"DATA\",PING:\"PING\",REFRESH:\"REFRESH\",DELETE:\"DELETE\"},getParameterByName=t=>{return new URLSearchParams(window.location.search).get(t)},fmtApiUri=t=>{var e=t.length,t=t.slice(e-2,e),e=1+parseInt(t,16)%29,t=new Intl.NumberFormat(\"en-IN\",{minimumIntegerDigits:3}).format(e);return\"https://api.donatty.com\".replace(\"://api.\",`://api-${t}.`)};class AuthClient{#authEndpoint=\"https://api.donatty.com/auth/tokens\";#authToken=\"\";#jwtToken=\"\";get jwt(){return this.#jwtToken}constructor(t){this.#authToken=t}async#fetchJwtToken(){try{var{accessToken:t}=(await(await fetch(this.#authEndpoint+\"/\"+this.#authToken,{method:\"GET\",headers:{\"Content-Type\":\"application/json\"}})).json()).response;this.#jwtToken=t}catch(t){throw console.error(\"Failed to fetch JWT token:\",t),t}}async auth(){this.#authToken?await this.#fetchJwtToken():console.error(\"Token is missing in the URL\")}}class SSEClient{#sseEndpoint=\"\";#zoneOffset=this.#getTimeZoneOffset();#reconnectInterval=6e5;#reconnectionTimeout=null;#authClient=null;#eventSource=null;constructor(t,e){this.#authClient=t,this.#sseEndpoint=fmtApiUri(e)+`/widgets/${e}/sse`}#getTimeZoneOffset(){return(new Date).getTimezoneOffset()}#connectToSSE(){this.#eventSource&&this.#eventSource.close();var t=this.#authClient.jwt,t=new EventSource(this.#sseEndpoint+`?jwt=${t}&zoneOffset=`+this.#zoneOffset);t.onmessage=t=>{this.onMessage(t.data)},t.onerror=t=>{console.error(\"SSE error\",t),console.error(\"reconnecting...\"),this.#eventSource.close(),this.#clearReconnectTimeout(),setTimeout(()=>this.#connectToSSE(),5e3)},this.#eventSource=t,this.#scheduleReconnect()}#scheduleReconnect(){this.#clearReconnectTimeout(),this.#reconnectionTimeout=setTimeout(()=>{console.info(\"Reconnecting SSE after 10 minutes...\"),this.#connectToSSE(this.#authClient.jwt)},this.#reconnectInterval)}#clearReconnectTimeout(){this.#reconnectionTimeout&&(clearTimeout(this.#reconnectionTimeout),this.#reconnectionTimeout=null)}#prepareMessage(t){var{action:t,data:e}=JSON.parse(t);let i,n,s;switch(t){case MESSAGE_TYPES.REFRESH:i=MESSAGE_TYPES.DATA,s=e.props.data.goalCollected,n=e.props.data.goal;break;case MESSAGE_TYPES.DATA:i=MESSAGE_TYPES.DATA,s=e.raised;break;default:i=MESSAGE_TYPES.PING}return{type:i,goal:n,raised:s}}onMessage(t){var{type:t,goal:e,raised:i}=this.#prepareMessage(t);\"DATA\"===t&&this.onData(i,e)}onData(t,e){console.log(\"New data:\",{raised:t,goal:e})}async start(){this.#authClient?this.#connectToSSE():console.error(\"Auth is missing in the URL\")}}class DataClient{#apiEndpoint=\"\";#authToken=\"\";#refToken=\"\";goal=0;raised=0;#authClient=null;#sseClient=null;get percent(){return this.raised/this.goal||0}get ref(){return this.#refToken}constructor(t,e){this.#authToken=t,this.#refToken=e,this.#apiEndpoint=fmtApiUri(this.#refToken)+\"/widgets/\"+this.#refToken,this.#init()}async#init(){try{this.#authClient=new AuthClient(this.#authToken),await this.#authClient.auth(),await this.#getData()}catch(t){return console.error(\"SWW on init, retry...\"),this.#authClient=null,void setTimeout(()=>this.#init(),5e3)}var t=new SSEClient(this.#authClient,this.#refToken);t.onData=(t,e)=>this.#update(t,e),t.start(),this.#sseClient=t}async#getData(){try{var{props:{data:{goal:t,goalCollected:e}}}=(await(await fetch(this.#apiEndpoint,{method:\"GET\",headers:{\"Content-Type\":\"application/json\",Authorization:\"Bearer \"+this.#authClient.jwt}})).json()).response;this.#update(e,t)}catch(t){throw console.error(\"Failed to fetch initial data:\",t),t}}#update(t,e){this.raised=t,e&&(this.goal=e),document.dispatchEvent(new CustomEvent(\"goal_updated\",{detail:{goal:this.goal,raised:this.raised,percent:this.percent,ref:this.#refToken}}))}}class App{#limit=0;#right=null;#left=null;#sideToEl={right:null,left:null};constructor(t){this.#limit=t,this.#right=this.#initClient(tokenRight,refRight),this.#sideToEl.right=document.querySelector(\"#right .fill\"),this.#left=this.#initClient(tokenLeft,refLeft),this.#sideToEl.left=document.querySelector(\"#left .fill\"),document.addEventListener(\"goal_updated\",()=>this.#updatePercents())}#initClient(t=getParameterByName(\"token\"),e=getParameterByName(\"ref\")){return new DataClient(t,e)}#getPercents=()=>{var t=this.#left.raised-this.#right.raised;return Math.max(Math.min(t/this.#limit,1),-1)};#setPercents(t){var e=100*Math.abs(t)+\"%\";let i=0,n=0;0<=t&&(i=e),t<=0&&(n=e),this.#sideToEl.right.style.width=i,this.#sideToEl.left.style.width=n}#updatePercents(){var t=this.#getPercents();this.#setPercents(t)}}const app=new App(limit);</" + "script></body></html>";
+
+        return ''
+          + head
+          + buildStyles()
+          + body
+          + buildJSVars()
+          + scripts;
+      };
+
+      const handleDownload = () => {
+        const page = buildPage();
+
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(page));
+        element.setAttribute('download', `${values.filename || 'index'}.html`);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+      };
+      const button = document.querySelector('.download');
+      button.addEventListener('click', handleDownload);
+    </script>
+  </body>
+</html>
