@@ -59,15 +59,9 @@
       const ref = 'ref_token';
       const token = 'auth_token';
       const rotate = true;
+      const rainbow = true;
     </script>
     <script>
-      const MESSAGE_TYPES = {
-        DATA: 'DATA',
-        PING: 'PING',
-        REFRESH: 'REFRESH',
-        DELETE: 'DELETE',
-      };
-
       /**
        *
        * @param {string} ref
@@ -89,10 +83,26 @@
       }
 
       class AuthClient {
+        /**
+         *
+         * @type {string}
+         */
         #authEndpoint = 'https://api.donatty.com/auth/tokens';
+        /**
+         *
+         * @type {string}
+         */
         #authToken = '';
+        /**
+         *
+         * @type {string}
+         */
         #jwtToken = '';
 
+        /**
+         *
+         * @returns {string}
+         */
         get jwt() {
           return this.#jwtToken
         }
@@ -131,9 +141,25 @@
       }
 
       class SSEClient {
+        #RECONNECT_INTERVAL = 10 * 60 * 1000;
+        #MESSAGE_TYPES = {
+          DATA: 'DATA',
+          PING: 'PING',
+          REFRESH: 'REFRESH',
+          DELETE: 'DELETE',
+        };
+
+        /**
+         *
+         * @type {string}
+         */
         #sseEndpoint = '';
+        /**
+         *
+         * @type {number}
+         */
         #zoneOffset = this.#getTimeZoneOffset();
-        #reconnectInterval = 10 * 60 * 1000;
+
 
         /**
          *
@@ -159,6 +185,10 @@
           this.#sseEndpoint = `${fmtApiUri(refToken)}/widgets/${refToken}/sse`;
         }
 
+        /**
+         *
+         * @returns {number}
+         */
         #getTimeZoneOffset() {
           return (new Date).getTimezoneOffset()
         }
@@ -200,7 +230,7 @@
             console.info('Reconnecting SSE after 10 minutes...');
 
             this.#connectToSSE(this.#authClient.jwt);
-          }, this.#reconnectInterval);
+          }, this.#RECONNECT_INTERVAL);
         }
 
         #clearReconnectTimeout() {
@@ -226,21 +256,21 @@
           let raised;
 
           switch (action) {
-            case MESSAGE_TYPES.REFRESH: {
-              type = MESSAGE_TYPES.DATA;
+            case this.#MESSAGE_TYPES.REFRESH: {
+              type = this.#MESSAGE_TYPES.DATA;
               raised = data.props.data.goalCollected;
               goal = data.props.data.goal;
 
               break;
             }
-            case MESSAGE_TYPES.DATA: {
-              type = MESSAGE_TYPES.DATA;
+            case this.#MESSAGE_TYPES.DATA: {
+              type = this.#MESSAGE_TYPES.DATA;
               raised = data.raised;
 
               break;
             }
             default: {
-              type = MESSAGE_TYPES.PING;
+              type = this.#MESSAGE_TYPES.PING;
             }
           }
 
@@ -254,7 +284,7 @@
         onMessage(message) {
           const { type, goal, raised } = this.#prepareMessage(message);
 
-          if (type !== 'DATA') {
+          if (type !== this.#MESSAGE_TYPES.DATA) {
             return;
           }
 
@@ -280,7 +310,7 @@
         }
       }
 
-      class DataClient {
+      class DataController {
         #apiEndpoint = ''
         #authToken = '';
         #refToken = '';
@@ -394,6 +424,23 @@
 
       class App {
         /**
+         * @type {string}
+         */
+        #ref
+        /**
+         * @type {string}
+         */
+        #token
+        /**
+         * @type {boolean}
+         */
+        #rotate
+        /**
+         * @type {boolean}
+         */
+        #rainbow
+
+        /**
          *
          * @type {number}
          */
@@ -419,7 +466,7 @@
 
         /**
          *
-         * @type {DataClient}
+         * @type {DataController}
          */
         #dataClient = null;
 
@@ -432,7 +479,19 @@
           image: null,
         };
 
-        constructor() {
+        /**
+         *
+         * @param {string} ref
+         * @param {string} token
+         * @param {boolean} rotate
+         * @param {boolean} rainbow
+         */
+        constructor(ref, token, rotate, rainbow) {
+          this.#ref = ref;
+          this.#token = token;
+          this.#rotate = rotate;
+          this.#rainbow = rainbow;
+
           this.#dataClient = this.#initClient(token, ref);
           this.#pieChart.piece = document.querySelector('#piece');
           this.#pieChart.image = document.querySelector('#image');
@@ -444,11 +503,11 @@
          *
          * @param {string} authToken
          * @param {string} refToken
-         * @returns {DataClient}
+         * @returns {DataController}
          */
         #initClient(authToken, refToken)
         {
-          return new DataClient(authToken, refToken);
+          return new DataController(authToken, refToken);
         }
 
         /**
@@ -457,8 +516,9 @@
          */
         #getDegrees() {
           const percent = Math.min(this.#percent, 1);
+          const full = this.#rainbow ? 180 : 360;
 
-          return Math.round(Math.min(360 * percent, 360));
+          return Math.round(Math.min(full * percent, full));
         }
 
         /**
@@ -624,7 +684,7 @@
 
           this.#updateClipPath();
 
-          if (rotate) {
+          if (this.#rotate) {
             this.#updateRotate();
           }
 
@@ -651,7 +711,7 @@
         }
       }
 
-      const app = new App();
+      const app = new App(ref, token, rotate, rainbow);
     </script>
   </body>
 </html>
