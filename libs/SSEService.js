@@ -18,19 +18,16 @@ class SSEService {
   #connectionService
 
   /**
-   *
    * @type {number | null} timeout ID
    */
   #reconnectionTimeout = null;
 
   /**
-   *
    * @type {EventSource}
    */
   #eventSource = null;
 
   /**
-   *
    * @param {string} ref
    * @param {ConnectionService} connectionService
    */
@@ -123,7 +120,6 @@ class SSEService {
   }
 
   /**
-   *
    * @param {string} message
    */
   handleMessage(message) {

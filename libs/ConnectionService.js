@@ -1,3 +1,4 @@
+
 class ConnectionService {
   /**
    * @type {string}
@@ -60,6 +61,7 @@ class ConnectionService {
 
   /**
    * @param {string} ref
+   *
    * @returns {string}
    */
   #fmtApiUri = (ref) => {
@@ -77,14 +79,18 @@ class ConnectionService {
     return baseUri.replace("://api.", `://api-${a}.`);
   }
 
+  /**
+   *
+   * @returns {Promise<string>}
+   */
   async #getJWT() {
-    if (!this.#jwtToken) {
-      this.#jwtToken = await this.#authService.auth(this.#authToken);
-    }
-
-    return this.#jwtToken;
+    return this.#authService.getJWT(this.#authToken);
   }
 
+  /**
+   *
+   * @returns {Promise<EventSource>}
+   */
   async getSSEConnection() {
     const jwt = await this.#getJWT();
 
@@ -93,6 +99,7 @@ class ConnectionService {
 
   /**
    * @returns {Promise<{goal:number, raised: number}>}
+   * @throws {Error} error
    */
   async getData() {
     try {

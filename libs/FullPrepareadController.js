@@ -60,6 +60,7 @@ class ConnectionService {
 
   /**
    * @param {string} ref
+   *
    * @returns {string}
    */
   #fmtApiUri = (ref) => {
@@ -77,14 +78,18 @@ class ConnectionService {
     return baseUri.replace("://api.", `://api-${a}.`);
   }
 
+  /**
+   *
+   * @returns {Promise<string>}
+   */
   async #getJWT() {
-    if (!this.#jwtToken) {
-      this.#jwtToken = await this.#authService.auth(this.#authToken);
-    }
-
-    return this.#jwtToken;
+    return this.#authService.getJWT(this.#authToken);
   }
 
+  /**
+   *
+   * @returns {Promise<EventSource>}
+   */
   async getSSEConnection() {
     const jwt = await this.#getJWT();
 
@@ -93,6 +98,7 @@ class ConnectionService {
 
   /**
    * @returns {Promise<{goal:number, raised: number}>}
+   * @throws {Error} error
    */
   async getData() {
     try {
@@ -117,10 +123,22 @@ class ConnectionService {
 }
 
 class AuthService {
+  #retryLimit = 5;
+
   /**
    * @type {string}
    */
   #endpoint = '';
+
+  /**
+   * @type {string}
+   */
+  #token = '';
+
+  /**
+   * @type {string}
+   */
+  #jwt = '';
 
   /**
    * @param {string} endpoint
@@ -130,12 +148,25 @@ class AuthService {
   };
 
   /**
-   * @param token
+   * @param {string} token
+   *
    * @returns {Promise<string>}
    */
-  async auth(token) {
-    let jwt = '';
+  async getJWT(token) {
+    if (this.#jwt) {
+      return this.#jwt;
+    }
 
+    return this.auth(token);
+  }
+
+  /**
+   * @param {string} token
+   * @param {number?} tryCounter
+   *
+   * @returns {Promise<string>}
+   */
+  async auth(token, tryCounter = 0) {
     try {
       const response = await fetch(`${this.#endpoint}/${token}`, {
         method: 'GET',
@@ -146,12 +177,18 @@ class AuthService {
 
       const { response: { accessToken } } = await response.json();
 
-      jwt = accessToken;
+      this.#token = token;
+      this.#jwt = accessToken;
     } catch (error) {
       console.error('Failed to fetch JWT token:', error);
+      if (tryCounter < this.#retryLimit) {
+        console.error('Retry...');
+
+        return this.auth(token, tryCounter + 1);
+      }
     }
 
-    return jwt;
+    return this.#jwt;
   };
 }
 
@@ -175,19 +212,16 @@ class SSEService {
   #connectionService
 
   /**
-   *
    * @type {number | null} timeout ID
    */
   #reconnectionTimeout = null;
 
   /**
-   *
    * @type {EventSource}
    */
   #eventSource = null;
 
   /**
-   *
    * @param {string} ref
    * @param {ConnectionService} connectionService
    */
@@ -280,7 +314,6 @@ class SSEService {
   }
 
   /**
-   *
    * @param {string} message
    */
   handleMessage(message) {
@@ -397,37 +430,48 @@ class DataController {
   /**
    * @type {DataService}
    */
-  #dataServiceReverse;
+  #dataServiceOpposite;
 
   get percent() {
     let percent = this.#dataService.percent;
 
-    if(this.#dataServiceReverse) {
-      const percentReverse = this.#dataServiceReverse.percent;
-      percent = percent - percentReverse;
+    if(this.#dataServiceOpposite) {
+      const percentOpposite = this.#dataServiceOpposite.percent;
+      percent = percent - percentOpposite;
     }
 
     return percent;
   }
 
+  get diff() {
+    let diff = this.#dataService.raised;
+
+    if(this.#dataServiceOpposite) {
+      const raisedOpposite = this.#dataServiceOpposite.raised;
+      diff = diff - raisedOpposite;
+    }
+
+    return diff;
+  }
+
   /**
-   *
    * @param {{ref: string, token: string}} goal
-   * @param {{ref: string, token: string}?} goalReverse
+   * @param {{ref: string, token: string}?} goalOpposite
    */
-  constructor(goal, goalReverse) {
+  constructor(goal, goalOpposite) {
     document.addEventListener(`${goal.ref}_data`, () => this.#update(goal.ref));
     this.#dataService = new DataService(goal);
 
-    if (goalReverse) {
-      document.addEventListener(`${goalReverse.ref}_data`, () => this.#update(goalReverse.ref));
-      this.#dataServiceReverse = new DataService(goalReverse);
+    if (goalOpposite) {
+      document.addEventListener(`${goalOpposite.ref}_data`, () => this.#update(goalOpposite.ref));
+      this.#dataServiceOpposite = new DataService(goalOpposite);
     }
   }
 
   #update() {
     const detail = {
       percent: this.percent,
+      diff: this.diff,
       goal: {
         goal: this.#dataService.goal,
         raised: this.#dataService.raised,
@@ -435,15 +479,30 @@ class DataController {
       },
     };
 
-    if (this.#dataServiceReverse) {
-      detail.goalReverse = {
-        goal: this.#dataServiceReverse.goal,
-        raised: this.#dataServiceReverse.raised,
-        percent: this.#dataServiceReverse.percent,
+    if (this.#dataServiceOpposite) {
+      detail.goalOpposite = {
+        goal: this.#dataServiceOpposite.goal,
+        raised: this.#dataServiceOpposite.raised,
+        percent: this.#dataServiceOpposite.percent,
       };
     }
 
     document.dispatchEvent(new CustomEvent('goal_updated', { detail }));
+  }
+
+  /**
+   * @param {number?} limit
+   * @returns {number}
+   */
+  getPercents = (limit) => {
+    let percent = this.percent;
+
+    if (limit) {
+      const diff = this.diff;
+      percent = diff / limit;
+    }
+
+    return Math.max(Math.min(percent, 1), -1);
   }
 }
 
