@@ -1,6 +1,6 @@
 class SSEService {
-  #RECONNECT_INTERVAL = 10 * 60 * 1000;
-  #MESSAGE_TYPES = {
+  _RECONNECT_INTERVAL = 10 * 60 * 1000;
+  _MESSAGE_TYPES = {
     DATA: 'DATA',
     PING: 'PING',
     REFRESH: 'REFRESH',
@@ -10,41 +10,41 @@ class SSEService {
   /**
    * @type {string}
    */
-  #ref
+  _ref
 
   /**
    * @type {ConnectionService} connectionService
    */
-  #connectionService
+  _connectionService
 
   /**
    * @type {number | null} timeout ID
    */
-  #reconnectionTimeout = null;
+  _reconnectionTimeout = null;
 
   /**
    * @type {EventSource}
    */
-  #eventSource = null;
+  _eventSource = null;
 
   /**
    * @param {string} ref
    * @param {ConnectionService} connectionService
    */
   constructor(ref, connectionService) {
-    this.#connectionService = connectionService;
-    this.#ref = ref;
+    this._connectionService = connectionService;
+    this._ref = ref;
   }
 
   /**
    * @returns {Promise<void>}
    */
-  async #connectToSSE() {
-    if (this.#eventSource) {
-      this.#eventSource.close();
+  async _connectToSSE() {
+    if (this._eventSource) {
+      this._eventSource.close();
     }
 
-    const eventSource = await this.#connectionService.getSSEConnection();
+    const eventSource = await this._connectionService.getSSEConnection();
 
     eventSource.onmessage = (event) => {
       this.handleMessage(event.data);
@@ -54,34 +54,34 @@ class SSEService {
       console.error('SSE error', e);
       console.error('reconnecting...');
 
-      this.#eventSource.close();
+      this._eventSource.close();
 
-      this.#clearReconnectTimeout();
-      setTimeout(() => this.#connectToSSE(), 5000);
+      this._clearReconnectTimeout();
+      setTimeout(() => this._connectToSSE(), 5000);
     };
 
-    this.#eventSource = eventSource;
+    this._eventSource = eventSource;
 
-    this.#scheduleReconnect();
+    this._scheduleReconnect();
   }
 
-  #scheduleReconnect() {
-    this.#clearReconnectTimeout();
+  _scheduleReconnect() {
+    this._clearReconnectTimeout();
 
-    this.#reconnectionTimeout = setTimeout(() => {
+    this._reconnectionTimeout = setTimeout(() => {
       console.info('Reconnecting SSE after 10 minutes...');
 
-      this.#connectToSSE();
-    }, this.#RECONNECT_INTERVAL);
+      this._connectToSSE();
+    }, this._RECONNECT_INTERVAL);
   }
 
-  #clearReconnectTimeout() {
-    if (!this.#reconnectionTimeout) {
+  _clearReconnectTimeout() {
+    if (!this._reconnectionTimeout) {
       return;
     }
 
-    clearTimeout(this.#reconnectionTimeout);
-    this.#reconnectionTimeout = null;
+    clearTimeout(this._reconnectionTimeout);
+    this._reconnectionTimeout = null;
   }
 
   /**
@@ -90,7 +90,7 @@ class SSEService {
    * @returns {{goal: undefined, raised: undefined, type: 'PING'}}
    * @returns {{goal: number?, raised: number, type: 'DATA'}}
    */
-  #prepareMessage(message) {
+  _prepareMessage(message) {
     const { action, data } = JSON.parse(message);
 
     let type;
@@ -98,21 +98,21 @@ class SSEService {
     let raised;
 
     switch (action) {
-      case this.#MESSAGE_TYPES.REFRESH: {
-        type = this.#MESSAGE_TYPES.DATA;
+      case this._MESSAGE_TYPES.REFRESH: {
+        type = this._MESSAGE_TYPES.DATA;
         raised = data.props.data.goalCollected;
         goal = data.props.data.goal;
 
         break;
       }
-      case this.#MESSAGE_TYPES.DATA: {
-        type = this.#MESSAGE_TYPES.DATA;
+      case this._MESSAGE_TYPES.DATA: {
+        type = this._MESSAGE_TYPES.DATA;
         raised = data.raised;
 
         break;
       }
       default: {
-        type = this.#MESSAGE_TYPES.PING;
+        type = this._MESSAGE_TYPES.PING;
       }
     }
 
@@ -124,17 +124,17 @@ class SSEService {
    */
   handleMessage(message) {
     document.dispatchEvent(new CustomEvent(
-      `${this.#ref}_sse_message`,
+      `${this._ref}_sse_message`,
       {
         detail: { message },
       },
     ));
 
-    const { type, goal, raised } = this.#prepareMessage(message);
+    const { type, goal, raised } = this._prepareMessage(message);
 
-    if (type === this.#MESSAGE_TYPES.DATA) {
+    if (type === this._MESSAGE_TYPES.DATA) {
       document.dispatchEvent(new CustomEvent(
-        `${this.#ref}_sse_data`,
+        `${this._ref}_sse_data`,
         {
           detail: { raised, goal },
         },
@@ -146,7 +146,7 @@ class SSEService {
    * @returns {Promise<void>}
    */
   async start() {
-    return this.#connectToSSE();
+    return this._connectToSSE();
   }
 }
 

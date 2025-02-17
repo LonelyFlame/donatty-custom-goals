@@ -3,48 +3,44 @@ class ConnectionService {
   /**
    * @type {string}
    */
-  #refToken = '';
+  _refToken = '';
   /**
    * @type {string}
    */
-  #authToken = '';
+  _authToken = '';
   /**
    * @type {string}
    */
-  #jwtToken = '';
-  /**
-   * @type {string}
-   */
-  #endpoint = 'https://api.donatty.com';
+  _endpoint = 'https://api.donatty.com';
 
   /**
    * @type AuthService
    */
-  #authService;
+  _authService;
 
   /**
    * @param {string} authToken
    * @param {string} refToken
    */
   constructor(authToken, refToken) {
-    this.#endpoint = this.#fmtApiUri(refToken);
-    this.#authToken = authToken;
-    this.#refToken = refToken;
+    this._endpoint = this._fmtApiUri(refToken);
+    this._authToken = authToken;
+    this._refToken = refToken;
 
-    this.#authService = new AuthService(this.authEndpoint);
+    this._authService = new AuthService(this.authEndpoint);
   }
 
   /**
    * @type {string}
    */
   get authEndpoint() {
-    return this.#endpoint + `/auth/tokens`;
+    return this._endpoint + `/auth/tokens`;
   }
   /**
    * @type {string}
    */
   get widgetsEndpoint() {
-    return this.#endpoint + `/widgets/${this.#refToken}`;
+    return this._endpoint + `/widgets/${this._refToken}`;
   }
   /**
    * @type {string}
@@ -55,7 +51,7 @@ class ConnectionService {
   /**
    * @returns {number}
    */
-  get #zoneOffset() {
+  get _zoneOffset() {
     return (new Date).getTimezoneOffset()
   }
 
@@ -64,7 +60,7 @@ class ConnectionService {
    *
    * @returns {string}
    */
-  #fmtApiUri = (ref) => {
+  _fmtApiUri = (ref) => {
     const baseUri = "https://api.donatty.com";
     const G = 1;
     const q = 30;
@@ -83,8 +79,8 @@ class ConnectionService {
    *
    * @returns {Promise<string>}
    */
-  async #getJWT() {
-    return this.#authService.getJWT(this.#authToken);
+  async _getJWT() {
+    return this._authService.getJWT(this._authToken);
   }
 
   /**
@@ -92,9 +88,9 @@ class ConnectionService {
    * @returns {Promise<EventSource>}
    */
   async getSSEConnection() {
-    const jwt = await this.#getJWT();
+    const jwt = await this._getJWT();
 
-    return new EventSource(`${this.sseEndpoint}?jwt=${jwt}&zoneOffset=${this.#zoneOffset}`);
+    return new EventSource(`${this.sseEndpoint}?jwt=${jwt}&zoneOffset=${this._zoneOffset}`);
   }
 
   /**
@@ -103,7 +99,7 @@ class ConnectionService {
    */
   async getData() {
     try {
-      const jwt = await this.#getJWT();
+      const jwt = await this._getJWT();
       const response = await fetch(this.widgetsEndpoint, {
         method: 'GET',
         headers: {

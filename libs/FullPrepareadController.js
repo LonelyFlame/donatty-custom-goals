@@ -2,48 +2,48 @@ class ConnectionService {
   /**
    * @type {string}
    */
-  #refToken = '';
+  _refToken = '';
   /**
    * @type {string}
    */
-  #authToken = '';
+  _authToken = '';
   /**
    * @type {string}
    */
-  #jwtToken = '';
+  _jwtToken = '';
   /**
    * @type {string}
    */
-  #endpoint = 'https://api.donatty.com';
+  _endpoint = 'https://api.donatty.com';
 
   /**
    * @type AuthService
    */
-  #authService;
+  _authService;
 
   /**
    * @param {string} authToken
    * @param {string} refToken
    */
   constructor(authToken, refToken) {
-    this.#endpoint = this.#fmtApiUri(refToken);
-    this.#authToken = authToken;
-    this.#refToken = refToken;
+    this._endpoint = this._fmtApiUri(refToken);
+    this._authToken = authToken;
+    this._refToken = refToken;
 
-    this.#authService = new AuthService(this.authEndpoint);
+    this._authService = new AuthService(this.authEndpoint);
   }
 
   /**
    * @type {string}
    */
   get authEndpoint() {
-    return this.#endpoint + `/auth/tokens`;
+    return this._endpoint + `/auth/tokens`;
   }
   /**
    * @type {string}
    */
   get widgetsEndpoint() {
-    return this.#endpoint + `/widgets/${this.#refToken}`;
+    return this._endpoint + `/widgets/${this._refToken}`;
   }
   /**
    * @type {string}
@@ -54,7 +54,7 @@ class ConnectionService {
   /**
    * @returns {number}
    */
-  get #zoneOffset() {
+  get _zoneOffset() {
     return (new Date).getTimezoneOffset()
   }
 
@@ -63,7 +63,7 @@ class ConnectionService {
    *
    * @returns {string}
    */
-  #fmtApiUri = (ref) => {
+  _fmtApiUri = (ref) => {
     const baseUri = "https://api.donatty.com";
     const G = 1;
     const q = 30;
@@ -82,8 +82,8 @@ class ConnectionService {
    *
    * @returns {Promise<string>}
    */
-  async #getJWT() {
-    return this.#authService.getJWT(this.#authToken);
+  async _getJWT() {
+    return this._authService.getJWT(this._authToken);
   }
 
   /**
@@ -91,9 +91,9 @@ class ConnectionService {
    * @returns {Promise<EventSource>}
    */
   async getSSEConnection() {
-    const jwt = await this.#getJWT();
+    const jwt = await this._getJWT();
 
-    return new EventSource(`${this.sseEndpoint}?jwt=${jwt}&zoneOffset=${this.#zoneOffset}`);
+    return new EventSource(`${this.sseEndpoint}?jwt=${jwt}&zoneOffset=${this._zoneOffset}`);
   }
 
   /**
@@ -102,7 +102,7 @@ class ConnectionService {
    */
   async getData() {
     try {
-      const jwt = await this.#getJWT();
+      const jwt = await this._getJWT();
       const response = await fetch(this.widgetsEndpoint, {
         method: 'GET',
         headers: {
@@ -123,28 +123,28 @@ class ConnectionService {
 }
 
 class AuthService {
-  #retryLimit = 5;
+  _retryLimit = 5;
 
   /**
    * @type {string}
    */
-  #endpoint = '';
+  _endpoint = '';
 
   /**
    * @type {string}
    */
-  #token = '';
+  _token = '';
 
   /**
    * @type {string}
    */
-  #jwt = '';
+  _jwt = '';
 
   /**
    * @param {string} endpoint
    */
   constructor(endpoint) {
-    this.#endpoint = endpoint;
+    this._endpoint = endpoint;
   };
 
   /**
@@ -153,8 +153,8 @@ class AuthService {
    * @returns {Promise<string>}
    */
   async getJWT(token) {
-    if (this.#jwt) {
-      return this.#jwt;
+    if (this._jwt) {
+      return this._jwt;
     }
 
     return this.auth(token);
@@ -168,7 +168,7 @@ class AuthService {
    */
   async auth(token, tryCounter = 0) {
     try {
-      const response = await fetch(`${this.#endpoint}/${token}`, {
+      const response = await fetch(`${this._endpoint}/${token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -177,24 +177,24 @@ class AuthService {
 
       const { response: { accessToken } } = await response.json();
 
-      this.#token = token;
-      this.#jwt = accessToken;
+      this._token = token;
+      this._jwt = accessToken;
     } catch (error) {
       console.error('Failed to fetch JWT token:', error);
-      if (tryCounter < this.#retryLimit) {
+      if (tryCounter < this._retryLimit) {
         console.error('Retry...');
 
         return this.auth(token, tryCounter + 1);
       }
     }
 
-    return this.#jwt;
+    return this._jwt;
   };
 }
 
 class SSEService {
-  #RECONNECT_INTERVAL = 10 * 60 * 1000;
-  #MESSAGE_TYPES = {
+  _RECONNECT_INTERVAL = 10 * 60 * 1000;
+  _MESSAGE_TYPES = {
     DATA: 'DATA',
     PING: 'PING',
     REFRESH: 'REFRESH',
@@ -204,41 +204,41 @@ class SSEService {
   /**
    * @type {string}
    */
-  #ref
+  _ref
 
   /**
    * @type {ConnectionService} connectionService
    */
-  #connectionService
+  _connectionService
 
   /**
    * @type {number | null} timeout ID
    */
-  #reconnectionTimeout = null;
+  _reconnectionTimeout = null;
 
   /**
    * @type {EventSource}
    */
-  #eventSource = null;
+  _eventSource = null;
 
   /**
    * @param {string} ref
    * @param {ConnectionService} connectionService
    */
   constructor(ref, connectionService) {
-    this.#connectionService = connectionService;
-    this.#ref = ref;
+    this._connectionService = connectionService;
+    this._ref = ref;
   }
 
   /**
    * @returns {Promise<void>}
    */
-  async #connectToSSE() {
-    if (this.#eventSource) {
-      this.#eventSource.close();
+  async _connectToSSE() {
+    if (this._eventSource) {
+      this._eventSource.close();
     }
 
-    const eventSource = await this.#connectionService.getSSEConnection();
+    const eventSource = await this._connectionService.getSSEConnection();
 
     eventSource.onmessage = (event) => {
       this.handleMessage(event.data);
@@ -248,34 +248,34 @@ class SSEService {
       console.error('SSE error', e);
       console.error('reconnecting...');
 
-      this.#eventSource.close();
+      this._eventSource.close();
 
-      this.#clearReconnectTimeout();
-      setTimeout(() => this.#connectToSSE(), 5000);
+      this._clearReconnectTimeout();
+      setTimeout(() => this._connectToSSE(), 5000);
     };
 
-    this.#eventSource = eventSource;
+    this._eventSource = eventSource;
 
-    this.#scheduleReconnect();
+    this._scheduleReconnect();
   }
 
-  #scheduleReconnect() {
-    this.#clearReconnectTimeout();
+  _scheduleReconnect() {
+    this._clearReconnectTimeout();
 
-    this.#reconnectionTimeout = setTimeout(() => {
+    this._reconnectionTimeout = setTimeout(() => {
       console.info('Reconnecting SSE after 10 minutes...');
 
-      this.#connectToSSE();
-    }, this.#RECONNECT_INTERVAL);
+      this._connectToSSE();
+    }, this._RECONNECT_INTERVAL);
   }
 
-  #clearReconnectTimeout() {
-    if (!this.#reconnectionTimeout) {
+  _clearReconnectTimeout() {
+    if (!this._reconnectionTimeout) {
       return;
     }
 
-    clearTimeout(this.#reconnectionTimeout);
-    this.#reconnectionTimeout = null;
+    clearTimeout(this._reconnectionTimeout);
+    this._reconnectionTimeout = null;
   }
 
   /**
@@ -284,7 +284,7 @@ class SSEService {
    * @returns {{goal: undefined, raised: undefined, type: 'PING'}}
    * @returns {{goal: number?, raised: number, type: 'DATA'}}
    */
-  #prepareMessage(message) {
+  _prepareMessage(message) {
     const { action, data } = JSON.parse(message);
 
     let type;
@@ -292,21 +292,21 @@ class SSEService {
     let raised;
 
     switch (action) {
-      case this.#MESSAGE_TYPES.REFRESH: {
-        type = this.#MESSAGE_TYPES.DATA;
+      case this._MESSAGE_TYPES.REFRESH: {
+        type = this._MESSAGE_TYPES.DATA;
         raised = data.props.data.goalCollected;
         goal = data.props.data.goal;
 
         break;
       }
-      case this.#MESSAGE_TYPES.DATA: {
-        type = this.#MESSAGE_TYPES.DATA;
+      case this._MESSAGE_TYPES.DATA: {
+        type = this._MESSAGE_TYPES.DATA;
         raised = data.raised;
 
         break;
       }
       default: {
-        type = this.#MESSAGE_TYPES.PING;
+        type = this._MESSAGE_TYPES.PING;
       }
     }
 
@@ -318,17 +318,17 @@ class SSEService {
    */
   handleMessage(message) {
     document.dispatchEvent(new CustomEvent(
-      `${this.#ref}_sse_message`,
+      `${this._ref}_sse_message`,
       {
         detail: { message },
       },
     ));
 
-    const { type, goal, raised } = this.#prepareMessage(message);
+    const { type, goal, raised } = this._prepareMessage(message);
 
-    if (type === this.#MESSAGE_TYPES.DATA) {
+    if (type === this._MESSAGE_TYPES.DATA) {
       document.dispatchEvent(new CustomEvent(
-        `${this.#ref}_sse_data`,
+        `${this._ref}_sse_data`,
         {
           detail: { raised, goal },
         },
@@ -340,7 +340,7 @@ class SSEService {
    * @returns {Promise<void>}
    */
   async start() {
-    return this.#connectToSSE();
+    return this._connectToSSE();
   }
 }
 
@@ -348,21 +348,21 @@ class DataService {
   /**
    * @type {string}
    */
-  #ref = '';
+  _ref = '';
   /**
    * @type {string}
    */
-  #token = '';
+  _token = '';
 
   /**
    * @type {SSEService}
    */
-  #sseService;
+  _sseService;
 
   /**
    * @type {ConnectionService}
    */
-  #connectionService;
+  _connectionService;
 
   /**
    * @type {number}
@@ -384,23 +384,23 @@ class DataService {
    * @param {{ref: string, token: string}} goal
    */
   constructor({ token, ref }) {
-    this.#token = token;
-    this.#ref = ref;
+    this._token = token;
+    this._ref = ref;
 
-    this.#connectionService = new ConnectionService(token, ref);
-    this.#sseService = new SSEService(ref, this.#connectionService);
+    this._connectionService = new ConnectionService(token, ref);
+    this._sseService = new SSEService(ref, this._connectionService);
 
     document.addEventListener(`${ref}_sse_data`, ({ detail }) => this.handleData(detail));
 
-    this.#init();
+    this._init();
   }
 
-  async #init() {
-    const { goal, raised } = await this.#connectionService.getData();
+  async _init() {
+    const { goal, raised } = await this._connectionService.getData();
     this.goal = goal;
     this.raised = raised;
 
-    this.#sseService.start();
+    this._sseService.start();
   }
 
   /**
@@ -414,7 +414,7 @@ class DataService {
     }
 
     document.dispatchEvent(new CustomEvent(
-      `${this.#ref}_data`,
+      `${this._ref}_data`,
       {
         detail: { raised, goal, percent: this.percent },
       },
@@ -426,17 +426,17 @@ class DataController {
   /**
    * @type {DataService}
    */
-  #dataService;
+  _dataService;
   /**
    * @type {DataService}
    */
-  #dataServiceOpposite;
+  _dataServiceOpposite;
 
   get percent() {
-    let percent = this.#dataService.percent;
+    let percent = this._dataService.percent;
 
-    if(this.#dataServiceOpposite) {
-      const percentOpposite = this.#dataServiceOpposite.percent;
+    if(this._dataServiceOpposite) {
+      const percentOpposite = this._dataServiceOpposite.percent;
       percent = percent - percentOpposite;
     }
 
@@ -444,10 +444,10 @@ class DataController {
   }
 
   get diff() {
-    let diff = this.#dataService.raised;
+    let diff = this._dataService.raised;
 
-    if(this.#dataServiceOpposite) {
-      const raisedOpposite = this.#dataServiceOpposite.raised;
+    if(this._dataServiceOpposite) {
+      const raisedOpposite = this._dataServiceOpposite.raised;
       diff = diff - raisedOpposite;
     }
 
@@ -459,31 +459,31 @@ class DataController {
    * @param {{ref: string, token: string}?} goalOpposite
    */
   constructor(goal, goalOpposite) {
-    document.addEventListener(`${goal.ref}_data`, () => this.#update(goal.ref));
-    this.#dataService = new DataService(goal);
+    document.addEventListener(`${goal.ref}_data`, () => this._update(goal.ref));
+    this._dataService = new DataService(goal);
 
     if (goalOpposite) {
-      document.addEventListener(`${goalOpposite.ref}_data`, () => this.#update(goalOpposite.ref));
-      this.#dataServiceOpposite = new DataService(goalOpposite);
+      document.addEventListener(`${goalOpposite.ref}_data`, () => this._update(goalOpposite.ref));
+      this._dataServiceOpposite = new DataService(goalOpposite);
     }
   }
 
-  #update() {
+  _update() {
     const detail = {
       percent: this.percent,
       diff: this.diff,
       goal: {
-        goal: this.#dataService.goal,
-        raised: this.#dataService.raised,
-        percent: this.#dataService.percent,
+        goal: this._dataService.goal,
+        raised: this._dataService.raised,
+        percent: this._dataService.percent,
       },
     };
 
-    if (this.#dataServiceOpposite) {
+    if (this._dataServiceOpposite) {
       detail.goalOpposite = {
-        goal: this.#dataServiceOpposite.goal,
-        raised: this.#dataServiceOpposite.raised,
-        percent: this.#dataServiceOpposite.percent,
+        goal: this._dataServiceOpposite.goal,
+        raised: this._dataServiceOpposite.raised,
+        percent: this._dataServiceOpposite.percent,
       };
     }
 

@@ -1,26 +1,26 @@
 class AuthService {
-  #retryLimit = 5;
+  _retryLimit = 5;
 
   /**
    * @type {string}
    */
-  #endpoint = '';
+  _endpoint = '';
 
   /**
    * @type {string}
    */
-  #token = '';
+  _token = '';
 
   /**
    * @type {string}
    */
-  #jwt = '';
+  _jwt = '';
 
   /**
    * @param {string} endpoint
    */
   constructor(endpoint) {
-    this.#endpoint = endpoint;
+    this._endpoint = endpoint;
   };
 
   /**
@@ -29,8 +29,8 @@ class AuthService {
    * @returns {Promise<string>}
    */
   async getJWT(token) {
-    if (this.#jwt) {
-      return this.#jwt;
+    if (this._jwt) {
+      return this._jwt;
     }
 
     return this.auth(token);
@@ -44,7 +44,7 @@ class AuthService {
    */
   async auth(token, tryCounter = 0) {
     try {
-      const response = await fetch(`${this.#endpoint}/${token}`, {
+      const response = await fetch(`${this._endpoint}/${token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -53,18 +53,18 @@ class AuthService {
 
       const { response: { accessToken } } = await response.json();
 
-      this.#token = token;
-      this.#jwt = accessToken;
+      this._token = token;
+      this._jwt = accessToken;
     } catch (error) {
       console.error('Failed to fetch JWT token:', error);
-      if (tryCounter < this.#retryLimit) {
+      if (tryCounter < this._retryLimit) {
         console.error('Retry...');
 
         return this.auth(token, tryCounter + 1);
       }
     }
 
-    return this.#jwt;
+    return this._jwt;
   };
 }
 

@@ -2,17 +2,17 @@ class DataController {
   /**
    * @type {DataService}
    */
-  #dataService;
+  _dataService;
   /**
    * @type {DataService}
    */
-  #dataServiceOpposite;
+  _dataServiceOpposite;
 
   get percent() {
-    let percent = this.#dataService.percent;
+    let percent = this._dataService.percent;
 
-    if(this.#dataServiceOpposite) {
-      const percentOpposite = this.#dataServiceOpposite.percent;
+    if(this._dataServiceOpposite) {
+      const percentOpposite = this._dataServiceOpposite.percent;
       percent = percent - percentOpposite;
     }
 
@@ -20,10 +20,10 @@ class DataController {
   }
 
   get diff() {
-    let diff = this.#dataService.raised;
+    let diff = this._dataService.raised;
 
-    if(this.#dataServiceOpposite) {
-      const raisedOpposite = this.#dataServiceOpposite.raised;
+    if(this._dataServiceOpposite) {
+      const raisedOpposite = this._dataServiceOpposite.raised;
       diff = diff - raisedOpposite;
     }
 
@@ -35,31 +35,31 @@ class DataController {
    * @param {{ref: string, token: string}?} goalOpposite
    */
   constructor(goal, goalOpposite) {
-    document.addEventListener(`${goal.ref}_data`, () => this.#update(goal.ref));
-    this.#dataService = new DataService(goal);
+    document.addEventListener(`${goal.ref}_data`, () => this._update(goal.ref));
+    this._dataService = new DataService(goal);
 
     if (goalOpposite) {
-      document.addEventListener(`${goalOpposite.ref}_data`, () => this.#update(goalOpposite.ref));
-      this.#dataServiceOpposite = new DataService(goalOpposite);
+      document.addEventListener(`${goalOpposite.ref}_data`, () => this._update(goalOpposite.ref));
+      this._dataServiceOpposite = new DataService(goalOpposite);
     }
   }
 
-  #update() {
+  _update() {
     const detail = {
       percent: this.percent,
       diff: this.diff,
       goal: {
-        goal: this.#dataService.goal,
-        raised: this.#dataService.raised,
-        percent: this.#dataService.percent,
+        goal: this._dataService.goal,
+        raised: this._dataService.raised,
+        percent: this._dataService.percent,
       },
     };
 
-    if (this.#dataServiceOpposite) {
+    if (this._dataServiceOpposite) {
       detail.goalOpposite = {
-        goal: this.#dataServiceOpposite.goal,
-        raised: this.#dataServiceOpposite.raised,
-        percent: this.#dataServiceOpposite.percent,
+        goal: this._dataServiceOpposite.goal,
+        raised: this._dataServiceOpposite.raised,
+        percent: this._dataServiceOpposite.percent,
       };
     }
 

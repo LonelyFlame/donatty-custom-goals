@@ -2,21 +2,21 @@ class DataService {
   /**
    * @type {string}
    */
-  #ref = '';
+  _ref = '';
   /**
    * @type {string}
    */
-  #token = '';
+  _token = '';
 
   /**
    * @type {SSEService}
    */
-  #sseService;
+  _sseService;
 
   /**
    * @type {ConnectionService}
    */
-  #connectionService;
+  _connectionService;
 
   /**
    * @type {number}
@@ -38,23 +38,23 @@ class DataService {
    * @param {{ref: string, token: string}} goal
    */
   constructor({ token, ref }) {
-    this.#token = token;
-    this.#ref = ref;
+    this._token = token;
+    this._ref = ref;
 
-    this.#connectionService = new ConnectionService(token, ref);
-    this.#sseService = new SSEService(ref, this.#connectionService);
+    this._connectionService = new ConnectionService(token, ref);
+    this._sseService = new SSEService(ref, this._connectionService);
 
     document.addEventListener(`${ref}_sse_data`, ({ detail }) => this.handleData(detail));
 
-    this.#init();
+    this._init();
   }
 
-  async #init() {
-    const { goal, raised } = await this.#connectionService.getData();
+  async _init() {
+    const { goal, raised } = await this._connectionService.getData();
     this.goal = goal;
     this.raised = raised;
 
-    this.#sseService.start();
+    this._sseService.start();
   }
 
   /**
@@ -68,7 +68,7 @@ class DataService {
     }
 
     document.dispatchEvent(new CustomEvent(
-      `${this.#ref}_data`,
+      `${this._ref}_data`,
       {
         detail: { raised, goal, percent: this.percent },
       },
